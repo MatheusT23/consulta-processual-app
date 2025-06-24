@@ -3,6 +3,8 @@ import { Menu, Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 
 // Main App Component
 export default function App() {
+
+
   // State to store the conversation messages
   const [messages, setMessages] = useState([
     {
@@ -17,7 +19,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Ref to the chat container for auto-scrolling
-  const chatEndRef = useRef(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Effect to scroll to the bottom of the chat on new messages
   useEffect(() => {
@@ -58,12 +60,12 @@ export default function App() {
    * Handles key presses in the textarea, specifically for "Enter".
    * @param {React.KeyboardEvent<HTMLTextAreaElement>} event - The keyboard event.
    */
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault(); // Prevent new line on Enter
-      handleSendMessage();
-    }
-  };
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault(); // Prevent new line on Enter
+    handleSendMessage();
+  }
+};
 
   // --- Render Method ---
 
