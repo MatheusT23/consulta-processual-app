@@ -7,7 +7,7 @@ export default function App() {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: 'Olá! Sim, eu posso te ajudar com códigos em várias linguagens de programação, como Python, JavaScript, Java, C++, SQL, HTML/CSS, entre outras. Se você precisar de algo específico, é só me dizer!',
+      text: 'Olá! Digite o Número do processo para que eu possa consultá-lo"',
     },
   ]);
 
@@ -68,7 +68,7 @@ export default function App() {
   // --- Render Method ---
 
   return (
-    <div className="flex flex-col h-screen bg-[#1e1f22] text-white font-sans">
+    <div className="flex flex-col h-screen bg-[#fff] text-blue font-sans">
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-gray-700/50 flex-shrink-0">
         <div className="flex items-center gap-4">
@@ -79,7 +79,7 @@ export default function App() {
         </div>
         <div className="flex items-center gap-2">
            <button className="bg-blue-600 text-white px-4 py-2 text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
-            Get App
+            Entrar
            </button>
            <button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
             <Bot size={20} />
@@ -91,10 +91,10 @@ export default function App() {
       <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
         <div className="max-w-3xl mx-auto space-y-8">
           {messages.map((message, index) => (
-            <div key={index} className={`flex items-start gap-4 ${message.sender === 'user' ? 'justify-end' : ''}`}>
+            <div key={index} className={`flex items-start gap-4 ${message.sender === 'user' ? 'justify-end text-white' : ''}`}>
               {/* Bot/User Icon */}
               {message.sender === 'bot' && (
-                <div className="w-8 h-8 flex-shrink-0 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 flex-shrink-0 bg-blue-500 rounded-full flex items-center justify-center text-white">
                   <Bot size={20} />
                 </div>
               )}
@@ -107,7 +107,7 @@ export default function App() {
                     : 'bg-gray-800/60 rounded-bl-lg'
                 }`}
               >
-                <p className="whitespace-pre-wrap">{message.text}</p>
+                <p className="whitespace-pre-wrap text-white">{message.text}</p>
               </div>
               
                {message.sender === 'user' && (
@@ -136,20 +136,20 @@ export default function App() {
       </main>
 
       {/* Message Input Footer */}
-      <footer className="w-full p-4 md:p-6 flex-shrink-0 bg-[#1e1f22]">
+      <footer className="w-full p-4 md:p-6 flex-shrink-0 bg-[#014bea] text-white">
         <div className="max-w-3xl mx-auto">
            {/* Action Buttons */}
-          <div className="flex items-center gap-2 mb-2">
+          {/*<div className="flex items-center gap-2 mb-2">
             <button className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-600 rounded-lg hover:bg-gray-700/50 transition-colors">
                 <Cpu size={16} /> Processo
             </button>
              <button className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-600 rounded-lg hover:bg-gray-700/50 transition-colors">
                 <Search size={16} /> Search
             </button>
-          </div>
+          </div>*/}
         
-          {/* Text Input Area */}
-          <div className="relative flex items-center p-2 bg-[#2a2b30] border border-gray-700/50 rounded-2xl">
+          {/* Text Input Area #2a2b30 */}
+          <div className="relative flex items-center p-2 bg-[#fff] border border-gray-700/50 rounded-2xl">
             <textarea
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
