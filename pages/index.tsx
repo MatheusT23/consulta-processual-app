@@ -60,7 +60,7 @@ export default function App() {
    * Handles key presses in the textarea, specifically for "Enter".
    * @param {React.KeyboardEvent<HTMLTextAreaElement>} event - The keyboard event.
    */
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault(); // Prevent new line on Enter
     handleSendMessage();

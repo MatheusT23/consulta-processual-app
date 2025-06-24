@@ -3,10 +3,10 @@ globalThis.__BUILD_MANIFEST = {
     "/": [
       "static/chunks/node_modules_next_dist_4f3d469a._.js",
       "static/chunks/node_modules_react-dom_82bb97c6._.js",
-      "static/chunks/node_modules_1252008f._.js",
+      "static/chunks/node_modules_f6507901._.js",
       "static/chunks/[root-of-the-server]__6961bf74._.js",
       "static/chunks/pages_index_5771e187._.js",
-      "static/chunks/pages_index_d0218765._.js"
+      "static/chunks/pages_index_9fc1a1c9._.js"
     ],
     "/_app": [
       "static/chunks/node_modules_next_dist_4f3d469a._.js",
