@@ -765,7 +765,7 @@ function App() {
                                     onChange: (e)=>setInputValue(e.target.value),
                                     onKeyPress: handleKeyPress,
                                     placeholder: "Digite o Número do Processo...",
-                                    rows: "1",
+                                    rows: 1,
                                     className: "flex-1 bg-transparent p-2 resize-none outline-none placeholder-gray-500",
                                     style: {
                                         maxHeight: '150px'
