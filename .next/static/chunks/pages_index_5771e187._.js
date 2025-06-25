@@ -3,7 +3,7 @@
     chunks: [
   "static/chunks/node_modules_next_dist_4f3d469a._.js",
   "static/chunks/node_modules_react-dom_82bb97c6._.js",
-  "static/chunks/node_modules_f6507901._.js",
+  "static/chunks/node_modules_6699786f._.js",
   "static/chunks/[root-of-the-server]__6961bf74._.js"
 ],
     source: "entry"

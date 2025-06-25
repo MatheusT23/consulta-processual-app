@@ -137,8 +137,9 @@ export default function App() {
         </div>
       </main>
 
-      {/* Message Input Footer */}
-      <footer className="w-full p-4 md:p-6 flex-shrink-0 bg-[#014bea] text-white">
+      {/* Message Input Footer #014bea */}
+      
+      <footer className="w-full p-6 md:p-6 flex-shrink-0 bg-[#000]">
         <div className="max-w-3xl mx-auto">
            {/* Action Buttons */}
           {/*<div className="flex items-center gap-2 mb-2">
@@ -162,13 +163,13 @@ export default function App() {
               style={{ maxHeight: '150px' }}
             />
             <div className="flex items-center">
-              <button className="p-2 rounded-lg hover:bg-gray-600/50 transition-colors">
+              {/*<button className="p-2 rounded-lg hover:bg-gray-600/50 transition-colors">
                 <Mic size={20} />
-              </button>
+              </button>*/}
               <button 
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim() || isLoading}
-                className="p-2 rounded-lg bg-blue-600 disabled:bg-gray-500 hover:bg-blue-700 transition-colors disabled:cursor-not-allowed"
+                className="p-2 rounded-lg bg-black text-[#daa520] disabled:bg-gray-500 disabled:text-white hover:bg-blue-700 transition-colors disabled:cursor-not-allowed"
               >
                 <Search size={20} />
               </button>
