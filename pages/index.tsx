@@ -26,6 +26,35 @@ export default function App() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Initial typing effect for a call to action message
+  useEffect(() => {
+    const message = 'Teste';
+    let index = 0;
+
+    const startTyping = () => {
+      // Add an empty message for the bot
+      setMessages((prev) => [...prev, { sender: 'bot', text: '' }]);
+
+      const interval = setInterval(() => {
+        index += 1;
+        setMessages((prev) => {
+          const newMessages = [...prev];
+          newMessages[newMessages.length - 1].text = message.slice(0, index);
+          return newMessages;
+        });
+
+        if (index === message.length) {
+          clearInterval(interval);
+        }
+      }, 100);
+    };
+
+    const timeout = setTimeout(startTyping, 500);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
+
   // --- Event Handlers ---
 
   /**
