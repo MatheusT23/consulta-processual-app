@@ -9,7 +9,7 @@ export default function App() {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: 'Olá! Digite o Número do processo para que eu possa consultá-lo"',
+      text: 'Olá, Seja bem vindo !'
     },
   ]);
 
@@ -77,15 +77,15 @@ export default function App() {
           <button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
             <Menu size={20} />
           </button>
-          <h1 className="text-lg font-semibold">Consulta Processual</h1>
+          <h1 className="text-lg font-semibold">Acompanhar Processo</h1>
         </div>
         <div className="flex items-center gap-2">
-           <button className="bg-blue-600 text-white px-4 py-2 text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+           <button className="bg-black text-white px-4 py-2 text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
             Entrar
            </button>
-           <button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
+           {/*<button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
             <Bot size={20} />
-           </button>
+           </button>*/}
         </div>
       </header>
 
@@ -96,7 +96,7 @@ export default function App() {
             <div key={index} className={`flex items-start gap-4 ${message.sender === 'user' ? 'justify-end text-white' : ''}`}>
               {/* Bot/User Icon */}
               {message.sender === 'bot' && (
-                <div className="w-8 h-8 flex-shrink-0 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                <div className="w-8 h-8 flex-shrink-0 bg-black rounded-full flex items-center justify-center text-white">
                   <Bot size={20} />
                 </div>
               )}
