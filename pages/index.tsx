@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { Menu, Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 
@@ -109,9 +110,9 @@ export default function App() {
           <h1 className="text-lg font-semibold">Acompanhar Processo</h1>
         </div>
         <div className="flex items-center gap-2">
-           <button className="bg-black text-white px-4 py-2 text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+           <Link href="/login" className="bg-black text-white px-4 py-2 text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
             Entrar
-           </button>
+           </Link>
            {/*<button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
             <Bot size={20} />
            </button>*/}
