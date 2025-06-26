@@ -121,17 +121,13 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(
-        `https://datajud-wiki.cnj.jus.br/api-publica/exemplos/exemplo1?processo=${encodeURIComponent(
-          trimmedInput
-        )}`,
-        {
-          headers: {
-            Authorization:
-              'APIKey cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw==',
-          },
-        }
-      );
+      const res = await fetch('/api/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ numeroProcesso: trimmedInput }),
+      });
 
       if (!res.ok) {
         throw new Error('Erro ao consultar a API');
