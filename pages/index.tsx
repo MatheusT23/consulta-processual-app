@@ -35,17 +35,24 @@ export default function App() {
     ];
 
     let messageIndex = 0;
-    let charIndex = 0;
     let interval: NodeJS.Timeout;
 
     const typeNextMessage = () => {
       const text = botMessages[messageIndex];
+      let charIndex = 0;
+      let currentIndex = 0;
+
+      setMessages((prev) => {
+        currentIndex = prev.length;
+        return [...prev, { sender: 'bot', text: '' }];
+      });
+
       interval = setInterval(() => {
         charIndex += 1;
         setMessages((prev) => {
           const newMessages = [...prev];
-          newMessages[newMessages.length - 1] = {
-            ...newMessages[newMessages.length - 1],
+          newMessages[currentIndex] = {
+            ...newMessages[currentIndex],
             text: text.slice(0, charIndex),
           };
           return newMessages;
@@ -55,18 +62,15 @@ export default function App() {
           clearInterval(interval);
           messageIndex += 1;
           if (messageIndex < botMessages.length) {
-            charIndex = 0;
             setTimeout(() => {
-              setMessages((prev) => [...prev, { sender: 'bot', text: '' }]);
               typeNextMessage();
             }, 300);
           }
         }
-      }, 30);
+      }, 20);
     };
 
     // Start typing the first message
-    setMessages([{ sender: 'bot', text: '' }]);
     typeNextMessage();
 
     return () => clearInterval(interval);
