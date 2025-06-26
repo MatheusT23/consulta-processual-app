@@ -67,7 +67,7 @@ export default function App() {
             }, 300);
           }
         }
-      }, 20);
+      }, 15);
     };
 
     // Start typing the first message
@@ -75,6 +75,33 @@ export default function App() {
 
     return () => clearInterval(interval);
   }, []);
+
+  const typeBotMessage = (text: string) => {
+    let charIndex = 0;
+    let currentIndex = 0;
+
+    setMessages((prev) => {
+      currentIndex = prev.length;
+      return [...prev, { sender: 'bot', text: '' }];
+    });
+
+    const interval = setInterval(() => {
+      charIndex += 1;
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        newMessages[currentIndex] = {
+          ...newMessages[currentIndex],
+          text: text.slice(0, charIndex),
+        };
+        return newMessages;
+      });
+
+      if (charIndex === text.length) {
+        clearInterval(interval);
+        setIsLoading(false);
+      }
+    }, 15);
+  };
 
   // --- Event Handlers ---
 
@@ -97,12 +124,9 @@ export default function App() {
     // In a real application, you would make a fetch request here.
     // e.g., fetch('/api/chat', { method: 'POST', body: JSON.stringify({ prompt: trimmedInput }) })
     setTimeout(() => {
-      const botResponse = {
-        sender: 'bot',
-        text: 'Esta é uma resposta simulada do backend. Para conectar a uma API real, você precisaria substituir este setTimeout por uma chamada `fetch` para o seu endpoint.',
-      };
-      setMessages((prevMessages) => [...prevMessages, botResponse]);
-      setIsLoading(false);
+      typeBotMessage(
+        'Esta é uma resposta simulada do backend. Para conectar a uma API real, você precisaria substituir este setTimeout por uma chamada `fetch` para o seu endpoint.'
+      );
     }, 1500); // Simulate network delay
   };
 
@@ -205,12 +229,16 @@ export default function App() {
           <div className="relative flex items-center p-2 bg-[#fff] border border-gray-700/50 rounded-2xl">
             <textarea
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => {
+                const onlyNumbers = e.target.value.replace(/\D/g, '');
+                setInputValue(onlyNumbers);
+              }}
               onKeyPress={handleKeyPress}
               placeholder="Digite o Número do Processo..."
               rows={1}
               className="flex-1 bg-transparent p-2 resize-none outline-none placeholder-gray-500"
               style={{ maxHeight: '150px' }}
+              inputMode="numeric"
             />
             <div className="flex items-center">
               {/*<button className="p-2 rounded-lg hover:bg-gray-600/50 transition-colors">
