@@ -108,7 +108,7 @@ export default function App() {
   /**
    * Handles sending a message from the user.
    */
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     const trimmedInput = inputValue.trim();
     if (trimmedInput === '' || isLoading) {
       return; // Don't send empty messages or while loading
@@ -120,14 +120,28 @@ export default function App() {
     setInputValue('');
     setIsLoading(true);
 
-    // --- Backend API Call Simulation ---
-    // In a real application, you would make a fetch request here.
-    // e.g., fetch('/api/chat', { method: 'POST', body: JSON.stringify({ prompt: trimmedInput }) })
-    setTimeout(() => {
-      typeBotMessage(
-        'Esta é uma resposta simulada do backend. Para conectar a uma API real, você precisaria substituir este setTimeout por uma chamada `fetch` para o seu endpoint.'
+    try {
+      const res = await fetch(
+        `https://datajud-wiki.cnj.jus.br/api-publica/exemplos/exemplo1?processo=${encodeURIComponent(
+          trimmedInput
+        )}`,
+        {
+          headers: {
+            Authorization:
+              'APIKey cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw==',
+          },
+        }
       );
-    }, 1500); // Simulate network delay
+
+      if (!res.ok) {
+        throw new Error('Erro ao consultar a API');
+      }
+
+      const data = await res.json();
+      typeBotMessage(JSON.stringify(data, null, 2));
+    } catch (error) {
+      typeBotMessage(`Erro: ${(error as Error).message}`);
+    }
   };
 
   /**
