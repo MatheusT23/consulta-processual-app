@@ -134,7 +134,8 @@ export default function App() {
       }
 
       const data = await res.json();
-      typeBotMessage(JSON.stringify(data, null, 2));
+      const message = data.summary ?? JSON.stringify(data, null, 2);
+      typeBotMessage(message);
     } catch (error) {
       typeBotMessage(`Erro: ${(error as Error).message}`);
     }

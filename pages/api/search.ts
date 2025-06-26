@@ -40,7 +40,36 @@ export default async function handler(
     }
 
     const data = await dataRes.json()
-    return res.status(200).json(data)
+
+    const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'Você é um advogado experiente e deve resumir brevemente os movimentos do processo baseado na resposta a seguir.',
+          },
+          { role: 'user', content: JSON.stringify(data) },
+        ],
+        max_tokens: 200,
+      }),
+    })
+
+    if (!chatRes.ok) {
+      const text = await chatRes.text()
+      return res.status(chatRes.status).send(text)
+    }
+
+    const chatData = await chatRes.json()
+    const summary = chatData.choices?.[0]?.message?.content ?? ''
+
+    return res.status(200).json({ summary })
   } catch (error) {
     console.error(error)
     return res.status(500).json({ error: 'Failed to fetch' })
