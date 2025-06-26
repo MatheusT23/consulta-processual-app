@@ -7,12 +7,7 @@ export default function App() {
 
 
   // State to store the conversation messages
-  const [messages, setMessages] = useState([
-    {
-      sender: 'bot',
-      text: 'Olá, Seja bem vindo !'
-    },
-  ]);
+  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
 
   // State for the input field value
   const [inputValue, setInputValue] = useState('');
@@ -27,33 +22,46 @@ export default function App() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Initial typing effect for a call to action message
+  // Typing effect for the initial bot messages
   useEffect(() => {
-    const message = 'Teste';
-    let index = 0;
+    const botMessages = [
+      'Olá, seja bem vindo',
+      'Para que eu possa atualizar você sobre o andamento, por favor digite o número do processo.'
+    ];
 
-    const startTyping = () => {
-      // Add an empty message for the bot
-      setMessages((prev) => [...prev, { sender: 'bot', text: '' }]);
+    let messageIndex = 0;
+    let charIndex = 0;
+    let interval: NodeJS.Timeout;
 
-      const interval = setInterval(() => {
-        index += 1;
+    const typeNextMessage = () => {
+      const text = botMessages[messageIndex];
+      interval = setInterval(() => {
+        charIndex += 1;
         setMessages((prev) => {
           const newMessages = [...prev];
-          newMessages[newMessages.length - 1].text = message.slice(0, index);
+          newMessages[newMessages.length - 1].text = text.slice(0, charIndex);
           return newMessages;
         });
 
-        if (index === message.length) {
+        if (charIndex === text.length) {
           clearInterval(interval);
+          messageIndex += 1;
+          if (messageIndex < botMessages.length) {
+            charIndex = 0;
+            setTimeout(() => {
+              setMessages((prev) => [...prev, { sender: 'bot', text: '' }]);
+              typeNextMessage();
+            }, 300);
+          }
         }
-      }, 100);
+      }, 70);
     };
 
-    const timeout = setTimeout(startTyping, 500);
-    return () => {
-      clearTimeout(timeout);
-    };
+    // Start typing the first message
+    setMessages([{ sender: 'bot', text: '' }]);
+    typeNextMessage();
+
+    return () => clearInterval(interval);
   }, []);
 
   // --- Event Handlers ---
