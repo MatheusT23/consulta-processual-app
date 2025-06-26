@@ -16,6 +16,8 @@ export default function App() {
 
   // Ref to the chat container for auto-scrolling
   const chatEndRef = useRef<HTMLDivElement>(null);
+  // Guard to ensure intro messages run only once
+  const typingInitialized = useRef(false);
 
   // Effect to scroll to the bottom of the chat on new messages
   useEffect(() => {
@@ -24,6 +26,9 @@ export default function App() {
 
   // Typing effect for the initial bot messages
   useEffect(() => {
+    if (typingInitialized.current) return;
+    typingInitialized.current = true;
+
     const botMessages = [
       'Olá, seja bem vindo',
       'Para que eu possa atualizar você sobre o andamento, por favor digite o número do processo.'
@@ -39,7 +44,10 @@ export default function App() {
         charIndex += 1;
         setMessages((prev) => {
           const newMessages = [...prev];
-          newMessages[newMessages.length - 1].text = text.slice(0, charIndex);
+          newMessages[newMessages.length - 1] = {
+            ...newMessages[newMessages.length - 1],
+            text: text.slice(0, charIndex),
+          };
           return newMessages;
         });
 
@@ -54,7 +62,7 @@ export default function App() {
             }, 300);
           }
         }
-      }, 70);
+      }, 30);
     };
 
     // Start typing the first message
