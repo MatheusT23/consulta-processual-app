@@ -1,12 +1,12 @@
 globalThis.__BUILD_MANIFEST = {
   "pages": {
     "/": [
-      "static/chunks/node_modules_next_dist_4f3d469a._.js",
+      "static/chunks/node_modules_next_9a882e92._.js",
       "static/chunks/node_modules_react-dom_82bb97c6._.js",
-      "static/chunks/node_modules_f6507901._.js",
+      "static/chunks/node_modules_6699786f._.js",
       "static/chunks/[root-of-the-server]__6961bf74._.js",
       "static/chunks/pages_index_5771e187._.js",
-      "static/chunks/pages_index_9fc1a1c9._.js"
+      "static/chunks/pages_index_a3604477._.js"
     ],
     "/_app": [
       "static/chunks/node_modules_next_dist_4f3d469a._.js",

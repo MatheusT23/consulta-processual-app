@@ -31,7 +31,7 @@ export default function App() {
 
     const botMessages = [
       'Olá, seja bem vindo',
-      'Para que eu possa atualizar você sobre o andamento, por favor digite o número do processo.'
+      'Para que eu possa te atualizar sobre o andamento, por favor digite o número do processo.'
     ];
 
     let messageIndex = 0;
