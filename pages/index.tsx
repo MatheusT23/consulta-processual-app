@@ -155,7 +155,7 @@ export default function App() {
   // --- Render Method ---
 
   return (
-    <div className="flex flex-col h-screen bg-[#fff] text-blue font-sans">
+    <div className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans">
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-gray-700/50 flex-shrink-0">
         <div className="flex items-center gap-4">
