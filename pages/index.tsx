@@ -239,7 +239,7 @@ export default function App() {
           </div>*/}
         
           {/* Text Input Area #2a2b30 */}
-          <div className="relative flex items-center p-2 bg-[#2a365e] border border-gray-700/50 rounded-2xl">
+          <div className="relative flex items-center p-2 bg-[#2a365e] border border-gray rounded-2xl">
             <textarea
               value={inputValue}
               onChange={(e) => {
