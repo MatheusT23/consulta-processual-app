@@ -8,15 +8,10 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { numeroProcesso, tribunal } = req.body
+  const { numeroProcesso } = req.body
   if (!numeroProcesso) {
     return res.status(400).json({ error: 'Missing numeroProcesso' })
   }
-
-  const endpoint =
-    tribunal === 'TJRJ'
-      ? 'https://api-publica.datajud.cnj.jus.br/api_publica_tjrj/_search'
-      : 'https://api-publica.datajud.cnj.jus.br/api_publica_trf2/_search'
 
   const payload = {
     query: {
@@ -28,7 +23,7 @@ export default async function handler(
 
   try {
     const dataRes = await fetch(
-      endpoint,
+      'https://api-publica.datajud.cnj.jus.br/api_publica_trf1/_search',
       {
         method: 'POST',
         headers: {
