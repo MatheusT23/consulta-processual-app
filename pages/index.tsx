@@ -159,9 +159,11 @@ export default function App() {
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-gray-700/50 flex-shrink-0">
         <div className="flex items-center gap-4">
+          {/*
           <button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
             <Menu size={20} />
           </button>
+          */}
           <h1 className="text-lg font-semibold">Acompanhar Processo</h1>
         </div>
         <div className="flex items-center gap-2">
@@ -264,7 +266,7 @@ export default function App() {
               </button>
             </div>
           </div>
-          <p className="text-center text-xs text-gray-500 mt-2">Koda - Todos os direitos reservados</p>
+          {/* <p className="text-center text-xs text-gray-500 mt-2">Koda - Todos os direitos reservados</p> */}
         </div>
       </footer>
     </div>
