@@ -13,6 +13,8 @@ export default function App() {
   const [inputValue, setInputValue] = useState('');
   // State to track if the bot is "thinking"
   const [isLoading, setIsLoading] = useState(false);
+  // State to select tribunal
+  const [court, setCourt] = useState('TRF2');
 
   // Ref to the chat container for auto-scrolling
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -126,7 +128,7 @@ export default function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ numeroProcesso: trimmedInput }),
+        body: JSON.stringify({ numeroProcesso: trimmedInput, tribunal: court }),
       });
 
       if (!res.ok) {
@@ -238,6 +240,20 @@ export default function App() {
             </button>
           </div>*/}
         
+          {/* Tribunal selector */}
+          <div className="mb-2">
+            <label htmlFor="court" className="mr-2 text-white">Tribunal:</label>
+            <select
+              id="court"
+              value={court}
+              onChange={(e) => setCourt(e.target.value)}
+              className="p-2 rounded-md text-black"
+            >
+              <option value="TRF2">TRF2</option>
+              <option value="TJRJ">TJRJ</option>
+            </select>
+          </div>
+
           {/* Text Input Area #2a2b30 #2a365e*/}
           <div className="relative flex items-center p-2 bg-[#2a365e] border border-white rounded-2xl">
             <textarea
