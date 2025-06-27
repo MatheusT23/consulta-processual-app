@@ -249,7 +249,7 @@ export default function App() {
               onKeyPress={handleKeyPress}
               placeholder="Digite o Número do Processo..."
               rows={1}
-              className="flex-1 bg-transparent p-2 resize-none outline-none placeholder-white border border-white text-[105%] font-bold"
+              className="flex-1 bg-transparent p-2 resize-none outline-none placeholder-white text-[105%] font-bold"
               style={{ maxHeight: '150px' }}
               inputMode="numeric"
             />
