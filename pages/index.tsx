@@ -238,8 +238,8 @@ export default function App() {
             </button>
           </div>*/}
         
-          {/* Text Input Area #2a2b30 */}
-          <div className="relative flex items-center p-2 bg-[#2a365e] border border-gray rounded-2xl">
+          {/* Text Input Area #2a2b30 #2a365e*/}
+          <div className="relative flex items-center p-2 bg-[#2a365e] border border-white rounded-2xl">
             <textarea
               value={inputValue}
               onChange={(e) => {
@@ -249,7 +249,7 @@ export default function App() {
               onKeyPress={handleKeyPress}
               placeholder="Digite o Número do Processo..."
               rows={1}
-              className="flex-1 bg-white p-2 resize-none outline-none placeholder-[#2a365e] text-[105%] font-bold"
+              className="flex-1 bg-transparent p-2 resize-none outline-none placeholder-[#2a365e] text-[105%] font-bold"
               style={{ maxHeight: '150px' }}
               inputMode="numeric"
             />
