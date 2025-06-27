@@ -164,7 +164,7 @@ export default function App() {
             <Menu size={20} />
           </button>
           */}
-          <h1 className="text-lg font-semibold">Acompanhar Processo</h1>
+          <h1 className="text-2xl font-bold font-sans">Acompanhar Processo</h1>
         </div>
         <div className="flex items-center gap-2">
            <Link href="/login" className="bg-black text-white px-4 py-2 text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
@@ -192,11 +192,11 @@ export default function App() {
               <div
                 className={`max-w-xl p-4 rounded-2xl ${
                   message.sender === 'user'
-                    ? 'bg-gray-700/80 rounded-br-lg'
+                    ? 'bg-[#2a365e] rounded-br-lg'
                     : 'bg-gray-800/60 rounded-bl-lg'
                 }`}
               >
-                <p className="whitespace-pre-wrap text-white">{message.text}</p>
+                  <p className="whitespace-pre-wrap text-white text-[1.15rem]">{message.text}</p>
               </div>
               
                {message.sender === 'user' && (
