@@ -226,7 +226,7 @@ export default function App() {
 
       {/* Message Input Footer #014bea */}
       
-      <footer className="w-full p-6 md:p-6 flex-shrink-0 bg-[#000]">
+      <footer className="w-full p-6 md:p-6 flex-shrink-0 bg-[#2a365e]">
         <div className="max-w-3xl mx-auto">
            {/* Action Buttons */}
           {/*<div className="flex items-center gap-2 mb-2">
