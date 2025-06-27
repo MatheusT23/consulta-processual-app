@@ -167,7 +167,7 @@ export default function App() {
           <h1 className="text-2xl font-bold font-sans">Acompanhar Processo</h1>
         </div>
         <div className="flex items-center gap-2">
-           <Link href="/login" className="bg-black text-white px-4 py-2 text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+           <Link href="/login" className="bg-[#2a365e] text-white px-4 py-2 text-sm font-semibold rounded-lg hover:opacity-90 transition-colors">
             Entrar
            </Link>
            {/*<button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
@@ -239,7 +239,7 @@ export default function App() {
           </div>*/}
         
           {/* Text Input Area #2a2b30 */}
-          <div className="relative flex items-center p-2 bg-[#fff] border border-gray-700/50 rounded-2xl">
+          <div className="relative flex items-center p-2 bg-[#2a365e] border border-gray-700/50 rounded-2xl">
             <textarea
               value={inputValue}
               onChange={(e) => {
