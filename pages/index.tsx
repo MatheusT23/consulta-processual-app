@@ -100,7 +100,7 @@ export default function App() {
         clearInterval(interval);
         setIsLoading(false);
       }
-    }, 15);
+    }, 5);
   };
 
   // --- Event Handlers ---
