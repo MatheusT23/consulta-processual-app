@@ -250,6 +250,7 @@ export default function App() {
               className="p-2 rounded-md text-black"
             >
               <option value="TRF2">TRF2</option>
+              <option value="TRF2_EPROC">TRF2 - Eproc</option>
               <option value="TJRJ">TJRJ</option>
             </select>
           </div>
