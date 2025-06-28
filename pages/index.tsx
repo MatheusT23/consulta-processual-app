@@ -136,10 +136,6 @@ export default function App() {
       }
 
       const data = await res.json();
-      if (data.events) {
-        const raw = Array.isArray(data.events) ? data.events.join('\n') : String(data.events);
-        typeBotMessage(`Eventos TRF2-Eproc:\n${raw}`);
-      }
       const message = data.summary ?? JSON.stringify(data, null, 2);
       typeBotMessage(message);
     } catch (error) {
@@ -254,7 +250,6 @@ export default function App() {
               className="p-2 rounded-md text-black"
             >
               <option value="TRF2">TRF2</option>
-              <option value="TRF2_EPROC">TRF2 - Eproc</option>
               <option value="TJRJ">TJRJ</option>
             </select>
           </div>
