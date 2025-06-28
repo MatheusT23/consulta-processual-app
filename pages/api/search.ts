@@ -83,7 +83,7 @@ export default async function handler(
       const chatData = await chatRes.json()
       const summary = chatData.choices?.[0]?.message?.content ?? ''
 
-      return res.status(200).json({ summary })
+      return res.status(200).json({ summary, events })
     } catch (error) {
       console.error(error)
       return res
