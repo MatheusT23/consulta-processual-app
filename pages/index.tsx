@@ -15,9 +15,6 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   // State to select tribunal
   const [court, setCourt] = useState('TRF2');
-  const [captchaInfo, setCaptchaInfo] = useState<{ token: string; image: string } | null>(null);
-  const [captchaValue, setCaptchaValue] = useState('');
-  const [storedProcess, setStoredProcess] = useState('');
 
   // Ref to the chat container for auto-scrolling
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -118,50 +115,24 @@ export default function App() {
     if (isLoading) return;
 
     if (court === 'TRF2-Eproc') {
-      if (!captchaInfo) {
-        if (trimmedInput === '') return;
-        const newUserMessage = { sender: 'user', text: trimmedInput };
-        setMessages((prev) => [...prev, newUserMessage]);
-        setInputValue('');
-        setIsLoading(true);
-        try {
-          const res = await fetch(`/api/trf2/eproc?numeroProcesso=${trimmedInput}`);
-          if (!res.ok) throw new Error('Falha ao obter captcha');
-          const data = await res.json();
-          setCaptchaInfo({ token: data.token, image: data.captcha });
-          setStoredProcess(trimmedInput);
-          typeBotMessage('Por favor, digite o captcha exibido.');
-        } catch (error) {
-          typeBotMessage(`Erro: ${(error as Error).message}`);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        if (captchaValue.trim() === '') return;
-        const userMsg = { sender: 'user', text: captchaValue };
-        setMessages((prev) => [...prev, userMsg]);
-        setCaptchaValue('');
-        setIsLoading(true);
-        try {
-          const res = await fetch('/api/trf2/eproc', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              numeroProcesso: storedProcess,
-              captcha: captchaValue,
-              token: captchaInfo.token,
-            }),
-          });
-          if (!res.ok) throw new Error('Erro ao consultar o processo');
-          const data = await res.json();
-          const msg = data.resumo ?? JSON.stringify(data, null, 2);
-          typeBotMessage(msg);
-        } catch (error) {
-          typeBotMessage(`Erro: ${(error as Error).message}`);
-        } finally {
-          setCaptchaInfo(null);
-          setIsLoading(false);
-        }
+      const newUserMessage = { sender: 'user', text: trimmedInput };
+      setMessages((prev) => [...prev, newUserMessage]);
+      setInputValue('');
+      setIsLoading(true);
+      try {
+        const res = await fetch('/api/trf2/eproc', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ numeroProcesso: trimmedInput }),
+        });
+        if (!res.ok) throw new Error('Erro ao consultar o processo');
+        const data = await res.json();
+        const msg = data.resumo ?? JSON.stringify(data, null, 2);
+        typeBotMessage(msg);
+      } catch (error) {
+        typeBotMessage(`Erro: ${(error as Error).message}`);
+      } finally {
+        setIsLoading(false);
       }
       return;
     }
@@ -309,23 +280,6 @@ export default function App() {
             </select>
           </div>
 
-          {/* Captcha step for TRF2-Eproc */}
-          {court === 'TRF2-Eproc' && captchaInfo && (
-            <div className="mb-4 p-4 bg-gray-100 rounded">
-              <img
-                src={`data:image/png;base64,${captchaInfo.image}`}
-                alt="captcha"
-                className="mb-2"
-              />
-              <input
-                value={captchaValue}
-                onChange={(e) => setCaptchaValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Digite o captcha"
-                className="w-full p-2 rounded text-black"
-              />
-            </div>
-          )}
 
           {/* Text Input Area #2a2b30 #2a365e*/}
           <div className="relative flex items-center p-2 bg-[#2a365e] border border-white rounded-2xl">
@@ -345,12 +299,7 @@ export default function App() {
             <div className="flex items-center">
               <button
                 onClick={handleSendMessage}
-                disabled={
-                  isLoading ||
-                  (court === 'TRF2-Eproc' && captchaInfo
-                    ? !captchaValue.trim()
-                    : !inputValue.trim())
-                }
+                disabled={isLoading || !inputValue.trim()}
                 className="p-2 rounded-lg bg-gray-500 text-white disabled:bg-gray-500 disabled:text-white hover:bg-blue-700 transition-colors disabled:cursor-not-allowed"
               >
                 <Search size={20} />
