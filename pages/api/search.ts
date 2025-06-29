@@ -62,7 +62,7 @@ export default async function handler(
           },
           { role: 'user', content: JSON.stringify(data) },
         ],
-        max_tokens: 200,
+        max_tokens: 1000,
       }),
     })
 
