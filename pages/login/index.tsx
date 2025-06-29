@@ -1,5 +1,8 @@
 import { LoginForm } from "@/components/login-form";
 
+/**
+ * Simple wrapper page that centers the {@link LoginForm} component.
+ */
 export default function LoginPage() {
   return (
     <div className="flex safe-h-screen w-full items-center justify-center p-6 md:p-10">

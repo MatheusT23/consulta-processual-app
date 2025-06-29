@@ -2,7 +2,10 @@ import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { Menu, Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 
-// Main App Component
+/**
+ * Main chat application page. It manages the conversation state
+ * and communicates with the API routes.
+ */
 export default function App() {
 
 
@@ -78,6 +81,11 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
+  /**
+   * Animates the bot typing a message to the chat.
+   *
+   * @param text - Message that should appear in the chat.
+   */
   const typeBotMessage = (text: string) => {
     let charIndex = 0;
     let currentIndex = 0;
@@ -108,9 +116,12 @@ export default function App() {
   // --- Event Handlers ---
 
   /**
-   * Handles sending a message from the user.
+   * Sends the user input to the appropriate API route and appends
+   * both the user message and the bot response to the chat.
+   *
+   * @returns Promise resolved when the message cycle completes.
    */
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (): Promise<void> => {
     const trimmedInput = inputValue.trim();
     if (isLoading) return;
 
@@ -168,16 +179,18 @@ export default function App() {
   };
 
   /**
-   * Handles key presses in inputs, specifically for "Enter".
+   * Captures the "Enter" key to send the message instead of creating a new line.
+   *
+   * @param event - Keyboard event triggered by the input element.
    */
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault(); // Prevent new line on Enter
-    handleSendMessage();
-  }
-};
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Prevent new line on Enter
+      handleSendMessage();
+    }
+  };
 
   // --- Render Method ---
 
