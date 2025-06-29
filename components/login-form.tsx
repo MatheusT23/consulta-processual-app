@@ -11,10 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React from "react";
 
+/**
+ * Formulário de login utilizado na página de autenticação.
+ *
+ * @param className - Permite aplicar classes extras ao contêiner.
+ */
 export function LoginForm({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<'div'>) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -25,6 +30,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Formulário meramente ilustrativo, sem integração real */}
           <form>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
@@ -52,12 +58,14 @@ export function LoginForm({
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
+                {/* Botão de login social apenas para layout */}
                 <Button variant="outline" className="w-full">
                   Login with Google
                 </Button>
               </div>
             </div>
             <div className="mt-4 text-center text-sm">
+              {/* Link fictício para cadastro */}
               Don&apos;t have an account?{" "}
               <a href="#" className="underline underline-offset-4">
                 Sign up

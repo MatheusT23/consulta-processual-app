@@ -2,31 +2,34 @@ import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { Menu, Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 
-// Main App Component
+/**
+ * Página principal do chat. Controla o estado da conversa e
+ * realiza chamadas às rotas de API.
+ */
 export default function App() {
 
 
-  // State to store the conversation messages
+  // Armazena todas as mensagens trocadas na conversa
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
 
-  // State for the input field value
+  // Valor atual digitado no campo de texto
   const [inputValue, setInputValue] = useState('');
-  // State to track if the bot is "thinking"
+  // Indica se a resposta do bot está sendo carregada
   const [isLoading, setIsLoading] = useState(false);
-  // State to select tribunal
+  // Tribunal selecionado para consulta
   const [court, setCourt] = useState('TRF2');
 
-  // Ref to the chat container for auto-scrolling
+  // Referência para rolar o chat até o fim automaticamente
   const chatEndRef = useRef<HTMLDivElement>(null);
-  // Guard to ensure intro messages run only once
+  // Garante que as mensagens iniciais sejam exibidas apenas uma vez
   const typingInitialized = useRef(false);
 
-  // Effect to scroll to the bottom of the chat on new messages
+  // Sempre que novas mensagens são adicionadas, rola para o final
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Typing effect for the initial bot messages
+  // Efeito de digitação para as mensagens iniciais do bot
   useEffect(() => {
     if (typingInitialized.current) return;
     typingInitialized.current = true;
@@ -72,12 +75,17 @@ export default function App() {
       }, 15);
     };
 
-    // Start typing the first message
+    // Inicia a digitação da primeira mensagem
     typeNextMessage();
 
     return () => clearInterval(interval);
   }, []);
 
+  /**
+   * Anima a digitação de uma mensagem pelo bot.
+   *
+   * @param text - Texto que deve aparecer na conversa.
+   */
   const typeBotMessage = (text: string) => {
     let charIndex = 0;
     let currentIndex = 0;
@@ -108,9 +116,12 @@ export default function App() {
   // --- Event Handlers ---
 
   /**
-   * Handles sending a message from the user.
+   * Envia a mensagem digitada para a API e adiciona
+   * tanto o texto do usuário quanto a resposta do bot.
+   *
+   * @returns Promessa resolvida ao final do ciclo de mensagem.
    */
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (): Promise<void> => {
     const trimmedInput = inputValue.trim();
     if (isLoading) return;
 
@@ -120,6 +131,7 @@ export default function App() {
       setInputValue('');
       setIsLoading(true);
       try {
+        // Consulta específica ao endpoint que utiliza raspagem no eproc
         const res = await fetch('/api/trf2/eproc', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -145,6 +157,7 @@ export default function App() {
     setIsLoading(true);
 
     try {
+      // Consulta ao DataJud via rota interna
       const res = await fetch('/api/search', {
         method: 'POST',
         headers: {
@@ -168,18 +181,20 @@ export default function App() {
   };
 
   /**
-   * Handles key presses in inputs, specifically for "Enter".
+   * Captura a tecla Enter para enviar a mensagem ao invés de quebrar a linha.
+   *
+   * @param event - Evento do teclado disparado pelo campo de texto.
    */
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault(); // Prevent new line on Enter
-    handleSendMessage();
-  }
-};
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Evita quebra de linha
+      handleSendMessage();
+    }
+  };
 
-  // --- Render Method ---
+  // --- Renderização ---
 
   return (
     <div className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans">

@@ -1,10 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
+/** Importa o puppeteer apenas quando necessário. */
 async function loadPuppeteer() {
   const puppeteer = await import('puppeteer')
   return puppeteer
 }
 
+/**
+ * Resolve o desafio Turnstile do Cloudflare utilizando o 2captcha.
+ *
+ * @param siteKey - Chave do captcha extraída da página.
+ * @param pageUrl - URL onde o captcha está presente.
+ * @returns Token do captcha devolvido pelo 2captcha.
+ */
 async function solveTurnstile(siteKey: string, pageUrl: string): Promise<string> {
   const apiKey = process.env.TWOCAPTCHA_API_KEY
   if (!apiKey) {
@@ -55,6 +63,12 @@ async function solveTurnstile(siteKey: string, pageUrl: string): Promise<string>
   }
 }
 
+/**
+ * Realiza a raspagem do portal eproc do TRF2 e gera um resumo com o OpenAI.
+ *
+ * @param req - Requisição contendo o `numeroProcesso`.
+ * @param res - Resposta com os dados extraídos e o resumo.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST'])
@@ -73,11 +87,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
   )
 
+  // Abre a página de consulta do eproc
   await page.goto(
     'https://eproc-consulta.trf2.jus.br/eproc/externo_controlador.php?acao=processo_consulta_publica'
   )
+  // Preenche o número do processo no formulário
   await page.type('input[name="numero"]', numeroProcesso)
 
+  // Captura a chave do captcha da página
   const siteKey = await page.evaluate(() => {
     const el = document.querySelector('[data-sitekey]')
     return el ? (el as HTMLElement).getAttribute('data-sitekey') || '' : ''
@@ -85,11 +102,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const pageUrl = page.url()
 
   try {
+    // Resolve o captcha usando o serviço externo
     const cfToken = await solveTurnstile(siteKey, pageUrl)
     await page.evaluate((t: string) => {
       const input = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null
       if (input) input.value = t
     }, cfToken)
+    // Envia o formulário e aguarda a navegação
     await Promise.all([
       page.waitForNavigation(),
       page.click('button[type="submit"]'),
@@ -97,6 +116,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     await page.waitForSelector('#tabelaEventos tbody tr')
 
+    // Extrai os dois últimos eventos da tabela
     const data = await page.evaluate(() => {
       const rows = Array.from(document.querySelectorAll('#tabelaEventos tbody tr'))
       const events = rows.slice(0, 2).map((row) => {
@@ -115,10 +135,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     await browser.close()
 
+    // Monta o prompt para o chat GPT resumir os eventos
     const prompt =
       'Explique de forma clara e simples para um usuário leigo os dois últimos eventos deste processo judicial: ' +
       JSON.stringify(data.events)
 
+    // Chamada ao OpenAI para gerar o resumo
     const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -139,10 +161,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const chatData = await chatRes.json()
     const resumo = chatData.choices?.[0]?.message?.content || ''
 
+    // Retorna os eventos extraídos e o resumo em português simples
     return res.status(200).json({ ...data, resumo })
   } catch (err) {
     console.error(err)
     await browser.close()
+    // Qualquer erro durante o processo resulta em falha 500
     return res.status(500).json({ error: 'Consulta falhou' })
   }
 }

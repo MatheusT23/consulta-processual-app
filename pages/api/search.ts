@@ -1,5 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
+/**
+ * Consulta a API pública do CNJ e gera um resumo com o OpenAI.
+ *
+ * @param req - Objeto da requisição HTTP recebida.
+ * @param res - Objeto da resposta HTTP enviada.
+ * @returns Um JSON contendo o resumo ou mensagem de erro.
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -13,11 +20,13 @@ export default async function handler(
     return res.status(400).json({ error: 'Missing numeroProcesso' })
   }
 
+  // Define a URL correta de acordo com o tribunal informado
   const endpoint =
     tribunal === 'TJRJ'
       ? 'https://api-publica.datajud.cnj.jus.br/api_publica_tjrj/_search'
       : 'https://api-publica.datajud.cnj.jus.br/api_publica_trf2/_search';
 
+  // Corpo da requisição aceito pelo DataJud
   const payload = {
     query: {
       match: {
@@ -27,6 +36,7 @@ export default async function handler(
   }
 
   try {
+    // Chamada à API do CNJ
     const dataRes = await fetch(
       endpoint,
       {
@@ -46,6 +56,7 @@ export default async function handler(
 
     const data = await dataRes.json()
 
+    // Solicita ao OpenAI um resumo simplificado dos dados retornados
     const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -77,6 +88,7 @@ export default async function handler(
     return res.status(200).json({ summary })
   } catch (error) {
     console.error(error)
+    // Em caso de falha inesperada, retorna erro genérico
     return res.status(500).json({ error: 'Failed to fetch' })
   }
 }
