@@ -3,33 +3,33 @@ import { useState, useRef, useEffect } from 'react';
 import { Menu, Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 
 /**
- * Main chat application page. It manages the conversation state
- * and communicates with the API routes.
+ * Página principal do chat. Gerencia o estado da conversa
+ * e realiza chamadas às rotas de API.
  */
 export default function App() {
 
 
-  // State to store the conversation messages
+  // Guarda as mensagens trocadas no chat
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
 
-  // State for the input field value
+  // Valor atual do campo de entrada
   const [inputValue, setInputValue] = useState('');
-  // State to track if the bot is "thinking"
+  // Indica se o bot está processando
   const [isLoading, setIsLoading] = useState(false);
-  // State to select tribunal
+  // Tribunal selecionado pelo usuário
   const [court, setCourt] = useState('TRF2');
 
-  // Ref to the chat container for auto-scrolling
+  // Referência para rolar o chat automaticamente
   const chatEndRef = useRef<HTMLDivElement>(null);
-  // Guard to ensure intro messages run only once
+  // Garante que as mensagens iniciais sejam exibidas uma única vez
   const typingInitialized = useRef(false);
 
-  // Effect to scroll to the bottom of the chat on new messages
+  // Role até o final quando surgirem novas mensagens
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Typing effect for the initial bot messages
+  // Efeito de digitação das mensagens iniciais do bot
   useEffect(() => {
     if (typingInitialized.current) return;
     typingInitialized.current = true;
@@ -75,16 +75,16 @@ export default function App() {
       }, 15);
     };
 
-    // Start typing the first message
+    // Inicia a digitação da primeira mensagem
     typeNextMessage();
 
     return () => clearInterval(interval);
   }, []);
 
   /**
-   * Animates the bot typing a message to the chat.
+   * Anima a digitação de uma mensagem do bot.
    *
-   * @param text - Message that should appear in the chat.
+   * @param text - Texto que deve aparecer no chat.
    */
   const typeBotMessage = (text: string) => {
     let charIndex = 0;
@@ -113,13 +113,12 @@ export default function App() {
     }, 5);
   };
 
-  // --- Event Handlers ---
+  // --- Manipuladores de eventos ---
 
   /**
-   * Sends the user input to the appropriate API route and appends
-   * both the user message and the bot response to the chat.
+   * Envia o texto digitado para a API e adiciona a resposta ao chat.
    *
-   * @returns Promise resolved when the message cycle completes.
+   * @returns Promessa resolvida ao final do ciclo de mensagem.
    */
   const handleSendMessage = async (): Promise<void> => {
     const trimmedInput = inputValue.trim();
@@ -179,24 +178,24 @@ export default function App() {
   };
 
   /**
-   * Captures the "Enter" key to send the message instead of creating a new line.
+   * Captura a tecla "Enter" para enviar a mensagem sem quebrar linha.
    *
-   * @param event - Keyboard event triggered by the input element.
+   * @param event - Evento de teclado disparado pelo campo de texto.
    */
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault(); // Prevent new line on Enter
+      event.preventDefault(); // Evita quebra de linha ao pressionar Enter
       handleSendMessage();
     }
   };
 
-  // --- Render Method ---
+  // --- Renderização ---
 
   return (
     <div className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans">
-      {/* Header */}
+      {/* Cabeçalho */}
       <header className="flex items-center justify-between p-4 border-b border-gray-700/50 flex-shrink-0">
         <div className="flex items-center gap-4">
           {/*
@@ -216,19 +215,19 @@ export default function App() {
         </div>
       </header>
 
-      {/* Chat Messages Area */}
+      {/* Área das mensagens */}
       <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
         <div className="max-w-3xl mx-auto space-y-8">
           {messages.map((message, index) => (
             <div key={index} className={`flex items-start gap-4 ${message.sender === 'user' ? 'justify-end text-white' : ''}`}>
-              {/* Bot/User Icon */}
+              {/* Ícone do bot ou do usuário */}
               {message.sender === 'bot' && (
                 <div className="w-8 h-8 flex-shrink-0 bg-black rounded-full flex items-center justify-center text-white">
                   <Bot size={20} />
                 </div>
               )}
 
-              {/* Message Bubble */}
+              {/* Balão de mensagem */}
               <div
                 className={`max-w-xl p-4 rounded-2xl ${
                   message.sender === 'user'
@@ -246,7 +245,7 @@ export default function App() {
               )}
             </div>
           ))}
-          {/* Loading Indicator */}
+          {/* Indicador de carregamento */}
           {isLoading && (
              <div className="flex items-start gap-4">
                 <div className="w-8 h-8 flex-shrink-0 bg-blue-500 rounded-full flex items-center justify-center">
@@ -259,16 +258,16 @@ export default function App() {
                 </div>
              </div>
           )}
-          {/* Empty div to ensure scrolling to the end */}
+          {/* Div vazia para garantir rolagem até o final */}
           <div ref={chatEndRef} />
         </div>
       </main>
 
-      {/* Message Input Footer #014bea */}
+      {/* Rodapé com campo de entrada */}
       
       <footer className="w-full p-6 md:p-6 flex-shrink-0 bg-[#2a365e]">
         <div className="max-w-3xl mx-auto">
-           {/* Action Buttons */}
+           {/* Botões de ação */}
           {/*<div className="flex items-center gap-2 mb-2">
             <button className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-600 rounded-lg hover:bg-gray-700/50 transition-colors">
                 <Cpu size={16} /> Processo
@@ -278,7 +277,7 @@ export default function App() {
             </button>
           </div>*/}
         
-          {/* Tribunal selector */}
+          {/* Seletor de tribunal */}
           <div className="mb-2">
             <label htmlFor="court" className="mr-2 text-white">Tribunal:</label>
             <select
@@ -294,7 +293,7 @@ export default function App() {
           </div>
 
 
-          {/* Text Input Area #2a2b30 #2a365e*/}
+          {/* Área de texto para entrada do número */}
           <div className="relative flex items-center mb-3 p-2 bg-[#2a365e] border border-white rounded-2xl">
             <textarea
               value={inputValue}

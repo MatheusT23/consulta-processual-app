@@ -1,12 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 /**
- * Searches the CNJ public API for a process number and summarises
- * the result using OpenAI before returning it to the client.
+ * Consulta a API pública do CNJ e gera um resumo via OpenAI.
  *
- * @param req - Incoming HTTP request object.
- * @param res - Outgoing HTTP response object.
- * @returns A JSON response with a summary or an error message.
+ * @param req - Requisição HTTP recebida.
+ * @param res - Resposta HTTP enviada ao cliente.
+ * @returns JSON com o resumo ou mensagem de erro.
  */
 export default async function handler(
   req: NextApiRequest,
@@ -21,11 +20,13 @@ export default async function handler(
     return res.status(400).json({ error: 'Missing numeroProcesso' })
   }
 
+  // Define a URL de acordo com o tribunal escolhido
   const endpoint =
     tribunal === 'TJRJ'
       ? 'https://api-publica.datajud.cnj.jus.br/api_publica_tjrj/_search'
       : 'https://api-publica.datajud.cnj.jus.br/api_publica_trf2/_search';
 
+  // Corpo da requisição para a API do CNJ
   const payload = {
     query: {
       match: {
@@ -35,17 +36,15 @@ export default async function handler(
   }
 
   try {
-    const dataRes = await fetch(
-      endpoint,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `ApiKey ${process.env.DATAJUD_API_KEY ?? '<API Key>'}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      }
-    )
+    // Chamada à API do CNJ
+    const dataRes = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        Authorization: `ApiKey ${process.env.DATAJUD_API_KEY ?? '<API Key>'}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
 
     if (!dataRes.ok) {
       const text = await dataRes.text()
@@ -54,6 +53,7 @@ export default async function handler(
 
     const data = await dataRes.json()
 
+    // Utiliza o GPT para resumir os dados encontrados
     const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {

@@ -1,7 +1,7 @@
 import { LoginForm } from "@/components/login-form";
 
 /**
- * Simple wrapper page that centers the {@link LoginForm} component.
+ * Página de login que apenas centraliza o componente {@link LoginForm}.
  */
 export default function LoginPage() {
   return (

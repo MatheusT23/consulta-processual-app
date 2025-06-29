@@ -12,9 +12,9 @@ import { Label } from "@/components/ui/label";
 import React from "react";
 
 /**
- * Standard login form component used by the login page.
+ * Formulário de login padrão utilizado na página de autenticação.
  *
- * @param className - Optional style overrides for the wrapper.
+ * @param className - Permite adicionar classes extras ao contêiner.
  */
 export function LoginForm({
   className,
@@ -22,14 +22,17 @@ export function LoginForm({
 }: React.ComponentProps<'div'>) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
+      {/* Cartão central que contém o formulário */}
       <Card>
         <CardHeader>
+          {/* Título e subtítulo do formulário */}
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Campos de entrada do usuário */}
           <form>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
@@ -54,6 +57,7 @@ export function LoginForm({
                 <Input id="password" type="password" required />
               </div>
               <div className="flex flex-col gap-3">
+                {/* Botões de ação */}
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
