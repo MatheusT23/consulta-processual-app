@@ -85,7 +85,7 @@ async function handler(req, res) {
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
     await page.goto('https://eproc-consulta.trf2.jus.br/eproc/externo_controlador.php?acao=processo_consulta_publica');
-    await page.type('input[name="numero"]', numeroProcesso);
+    await page.type('input.infraText', numeroProcesso);
     const siteKey = await page.evaluate(()=>{
         const el = document.querySelector('[data-sitekey]');
         return el ? el.getAttribute('data-sitekey') || '' : '';
@@ -97,11 +97,15 @@ async function handler(req, res) {
             const input = document.querySelector('input[name="cf-turnstile-response"]');
             if (input) input.value = t;
         }, cfToken);
-        await Promise.all([
-            page.waitForNavigation(),
-            page.click('button[type="submit"]')
-        ]);
-        await page.waitForSelector('#tabelaEventos tbody tr');
+        await page.click('button[type="submit"]');
+        await page.waitForSelector('#tabelaEventos tbody tr', {
+            timeout: 10000
+        }); // Wait for the target element
+        //await Promise.all([
+        //page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 }), // Wait until network is idle
+        //page.click('button[type="submit"]'),
+        //])
+        //await page.waitForSelector('#tabelaEventos tbody tr')
         const data = await page.evaluate(()=>{
             const rows = Array.from(document.querySelectorAll('#tabelaEventos tbody tr'));
             const events = rows.slice(0, 2).map((row)=>{

@@ -76,7 +76,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await page.goto(
     'https://eproc-consulta.trf2.jus.br/eproc/externo_controlador.php?acao=processo_consulta_publica'
   )
-  await page.type('input[name="numero"]', numeroProcesso)
+  await page.type('input.infraText', numeroProcesso)
 
   const siteKey = await page.evaluate(() => {
     const el = document.querySelector('[data-sitekey]')
@@ -90,12 +90,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const input = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null
       if (input) input.value = t
     }, cfToken)
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click('button[type="submit"]'),
-    ])
-
-    await page.waitForSelector('#tabelaEventos tbody tr')
+    
+    await page.click('button[type="submit"]');
+    await page.waitForSelector('#tabelaEventos tbody tr', { timeout: 10000 }); // Wait for the target element
+    //await Promise.all([
+    //page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 }), // Wait until network is idle
+    //page.click('button[type="submit"]'),
+    //])
+    //await page.waitForSelector('#tabelaEventos tbody tr')
 
     const data = await page.evaluate(() => {
       const rows = Array.from(document.querySelectorAll('#tabelaEventos tbody tr'))
