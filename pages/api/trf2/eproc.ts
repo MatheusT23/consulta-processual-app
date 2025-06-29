@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { randomUUID } from 'crypto'
 
 // Store active Puppeteer sessions in memory
-const sessions = new Map<string, { browser: any; page: any }>()
+const sessions = new Map<string, { browser: any; page: any; siteKey: string; pageUrl: string }>()
 
 async function loadPuppeteer() {
   // Lazy import so build does not fail when dependency is missing
@@ -10,8 +10,47 @@ async function loadPuppeteer() {
   return puppeteer
 }
 
+async function solveTurnstile(siteKey: string, pageUrl: string): Promise<string> {
+  const apiKey = process.env.TWOCAPTCHA_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing 2captcha API key')
+  }
+
+  const params = new URLSearchParams()
+  params.append('key', apiKey)
+  params.append('method', 'turnstile')
+  params.append('sitekey', siteKey)
+  params.append('pageurl', pageUrl)
+  params.append('json', '1')
+
+  const submitRes = await fetch('https://2captcha.com/in.php', {
+    method: 'POST',
+    body: params,
+  })
+  const submitData = (await submitRes.json()) as { status: number; request: string }
+  if (submitData.status !== 1) {
+    throw new Error(submitData.request)
+  }
+  const id = submitData.request
+
+  await new Promise((r) => setTimeout(r, 15000))
+  while (true) {
+    const res = await fetch(
+      `https://2captcha.com/res.php?key=${apiKey}&action=get&id=${id}&json=1`
+    )
+    const data = (await res.json()) as { status: number; request: string }
+    if (data.status === 1) {
+      return data.request
+    }
+    if (data.request !== 'CAPCHA_NOT_READY') {
+      throw new Error(data.request)
+    }
+    await new Promise((r) => setTimeout(r, 5000))
+  }
+}
+
 /**
- * Initialize a scraping session and return captcha image.
+ * Initialize a scraping session and return a session token.
  * GET ?numeroProcesso=0000000
  */
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
@@ -36,31 +75,27 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   // Fill in process number - selector may change, adjust if needed
   await page.type('input[name="numero"]', numero)
 
-  // Captcha image element
-  const captchaSelector = '#captcha-img'
-  await page.waitForSelector(captchaSelector, { timeout: 10000 })
-  const captchaElem = await page.$(captchaSelector)
-  if (!captchaElem) {
-    await browser.close()
-    return res.status(500).json({ error: 'Captcha not found' })
-  }
+  // Get Turnstile site key from the page
+  const siteKey = await page.evaluate(() => {
+    const el = document.querySelector('[data-sitekey]')
+    return el ? (el as HTMLElement).getAttribute('data-sitekey') || '' : ''
+  })
 
-  // Screenshot the captcha to send in base64
-  const captcha = (await captchaElem.screenshot({ encoding: 'base64' })) as string
+  const pageUrl = page.url()
 
   const token = randomUUID()
-  sessions.set(token, { browser, page })
+  sessions.set(token, { browser, page, siteKey, pageUrl })
 
-  return res.status(200).json({ captcha, token })
+  return res.status(200).json({ token })
 }
 
 /**
- * Submit captcha and extract data.
- * Body: { numeroProcesso, captcha, token }
+ * Solve Turnstile with 2captcha and extract data.
+ * Body: { numeroProcesso, token }
  */
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
-  const { numeroProcesso, captcha, token } = req.body || {}
-  if (!numeroProcesso || !captcha || !token) {
+  const { numeroProcesso, token } = req.body || {}
+  if (!numeroProcesso || !token) {
     return res.status(400).json({ error: 'Missing parameters' })
   }
 
@@ -69,11 +104,17 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: 'Invalid session' })
   }
 
-  const { browser, page } = session
+  const { browser, page, siteKey, pageUrl } = session
   try {
-    // Fill captcha - selector may change
-    await page.type('input[name="captcha"]', captcha)
-    await Promise.all([page.waitForNavigation(), page.click('button[type="submit"]')])
+    const cfToken = await solveTurnstile(siteKey, pageUrl)
+    await page.evaluate((t) => {
+      const input = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null
+      if (input) input.value = t
+    }, cfToken)
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click('button[type="submit"]'),
+    ])
 
     // Wait for table with events - adjust selector if the site changes
     await page.waitForSelector('#tabelaEventos tbody tr')
