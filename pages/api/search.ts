@@ -58,7 +58,7 @@ export default async function handler(
           {
             role: 'system',
             content:
-              'Você é um advogado experiente e deve resumir os movimentos do processo baseado na resposta a seguir. A sua resposta deverá separar cada movimento em um parágrafo, devidamente datados, e explique detalhadamente o que esse movimento pode representar para o andamento processual',
+              'Você é um advogado experiente e deve resumir os movimentos do processo baseado na resposta a seguir. A sua resposta deverá separar cada movimento em um parágrafo, devidamente datados, e explique objetivamente o que esse movimento pode representar para o andamento processual. Cada movimento deve ser explicado em até 1 linha',
           },
           { role: 'user', content: JSON.stringify(data) },
         ],
