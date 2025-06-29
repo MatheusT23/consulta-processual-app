@@ -1,5 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
+/**
+ * Searches the CNJ public API for a process number and summarises
+ * the result using OpenAI before returning it to the client.
+ *
+ * @param req - Incoming HTTP request object.
+ * @param res - Outgoing HTTP response object.
+ * @returns A JSON response with a summary or an error message.
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

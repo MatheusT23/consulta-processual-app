@@ -1,10 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
+/** Dynamically import puppeteer only when needed. */
 async function loadPuppeteer() {
   const puppeteer = await import('puppeteer')
   return puppeteer
 }
 
+/**
+ * Solves Cloudflare Turnstile using the 2captcha service.
+ *
+ * @param siteKey - Captcha site key from the page.
+ * @param pageUrl - Full URL where the captcha is rendered.
+ * @returns The captcha token provided by 2captcha.
+ */
 async function solveTurnstile(siteKey: string, pageUrl: string): Promise<string> {
   const apiKey = process.env.TWOCAPTCHA_API_KEY
   if (!apiKey) {
@@ -55,6 +63,13 @@ async function solveTurnstile(siteKey: string, pageUrl: string): Promise<string>
   }
 }
 
+/**
+ * Scrapes the TRF2 eproc portal to fetch the latest events of a process
+ * and generates a simplified summary using OpenAI.
+ *
+ * @param req - Incoming HTTP request containing `numeroProcesso`.
+ * @param res - HTTP response with the extracted data and summary.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST'])
