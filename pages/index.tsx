@@ -338,7 +338,7 @@ export default function App() {
               onKeyPress={handleKeyPress}
               placeholder="Digite o Número do Processo..."
               rows={1}
-              className="flex-1 bg-transparent p-2 resize-none outline-none placeholder-white text-[105%] font-bold"
+              className="flex-1 bg-transparent p-2 resize-none outline-none placeholder-white text-[105%] font-bold text-white"
               style={{ maxHeight: '150px' }}
               inputMode="numeric"
             />
@@ -351,7 +351,7 @@ export default function App() {
                     ? !captchaValue.trim()
                     : !inputValue.trim())
                 }
-                className="p-2 rounded-lg bg-black text-[#daa520] disabled:bg-gray-500 disabled:text-white hover:bg-blue-700 transition-colors disabled:cursor-not-allowed"
+                className="p-2 rounded-lg bg-gray-500 text-white disabled:bg-gray-500 disabled:text-white hover:bg-blue-700 transition-colors disabled:cursor-not-allowed"
               >
                 <Search size={20} />
               </button>

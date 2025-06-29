@@ -32,6 +32,7 @@
     --color-blue-500: oklch(62.3% .214 259.815);
     --color-blue-700: oklch(48.8% .243 264.376);
     --color-gray-50: oklch(98.5% .002 247.839);
+    --color-gray-100: oklch(96.7% .003 264.542);
     --color-gray-300: oklch(87.2% .01 258.338);
     --color-gray-500: oklch(55.1% .027 264.364);
     --color-gray-600: oklch(44.6% .03 256.802);
@@ -50,8 +51,11 @@
     --text-sm--line-height: calc(1.25 / .875);
     --text-lg: 1.125rem;
     --text-lg--line-height: calc(1.75 / 1.125);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
+    --font-weight-bold: 700;
     --radius-md: .375rem;
     --radius-lg: .5rem;
     --radius-2xl: 1rem;
@@ -298,8 +302,16 @@
     margin-top: calc(var(--spacing) * 4);
   }
 
+  .mr-2 {
+    margin-right: calc(var(--spacing) * 2);
+  }
+
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
+  }
+
+  .mb-4 {
+    margin-bottom: calc(var(--spacing) * 4);
   }
 
   .ml-auto {
@@ -318,6 +330,10 @@
     display: inline-block;
   }
 
+  .table {
+    display: table;
+  }
+
   .h-2 {
     height: calc(var(--spacing) * 2);
   }
@@ -328,14 +344,6 @@
 
   .h-9 {
     height: calc(var(--spacing) * 9);
-  }
-
-  .h-screen {
-    height: 100vh;
-  }
-
-  .min-h-screen {
-    min-height: 100vh;
   }
 
   .w-2 {
@@ -434,6 +442,10 @@
     overflow-y: auto;
   }
 
+  .rounded {
+    border-radius: .25rem;
+  }
+
   .rounded-2xl {
     border-radius: var(--radius-2xl);
   }
@@ -486,8 +498,12 @@
     }
   }
 
-  .bg-\[\#000\] {
-    background-color: #000;
+  .border-white {
+    border-color: var(--color-white);
+  }
+
+  .bg-\[\#2a365e\] {
+    background-color: #2a365e;
   }
 
   .bg-\[\#fff\] {
@@ -506,18 +522,16 @@
     background-color: var(--color-blue-500);
   }
 
+  .bg-gray-100 {
+    background-color: var(--color-gray-100);
+  }
+
+  .bg-gray-500 {
+    background-color: var(--color-gray-500);
+  }
+
   .bg-gray-600 {
     background-color: var(--color-gray-600);
-  }
-
-  .bg-gray-700\/80 {
-    background-color: #364153cc;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-gray-700\/80 {
-      background-color: color-mix(in oklab, var(--color-gray-700) 80%, transparent);
-    }
   }
 
   .bg-gray-800\/60 {
@@ -578,6 +592,11 @@
     font-family: var(--font-geist-sans);
   }
 
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+
   .text-lg {
     font-size: var(--text-lg);
     line-height: var(--tw-leading, var(--text-lg--line-height));
@@ -593,9 +612,22 @@
     line-height: var(--tw-leading, var(--text-xs--line-height));
   }
 
+  .text-\[1\.15rem\] {
+    font-size: 1.15rem;
+  }
+
+  .text-\[105\%\] {
+    font-size: 105%;
+  }
+
   .leading-none {
     --tw-leading: 1;
     line-height: 1;
+  }
+
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
   }
 
   .font-medium {
@@ -645,8 +677,8 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  .placeholder-gray-500::placeholder {
-    color: var(--color-gray-500);
+  .placeholder-white::placeholder {
+    color: var(--color-white);
   }
 
   .shadow, .shadow-sm {
@@ -699,18 +731,6 @@
   }
 
   @media (hover: hover) {
-    .hover\:bg-gray-600\/50:hover {
-      background-color: #4a556580;
-    }
-
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:bg-gray-600\/50:hover {
-        background-color: color-mix(in oklab, var(--color-gray-600) 50%, transparent);
-      }
-    }
-  }
-
-  @media (hover: hover) {
     .hover\:bg-gray-700\/50:hover {
       background-color: #36415380;
     }
@@ -731,6 +751,12 @@
   @media (hover: hover) {
     .hover\:underline:hover {
       text-decoration-line: underline;
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:opacity-90:hover {
+      opacity: .9;
     }
   }
 
@@ -793,6 +819,16 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.safe-h-screen {
+  height: calc(100vh - env(safe-area-inset-bottom));
+}
+
+@supports (height: 100dvh) {
+  .safe-h-screen {
+    height: 100dvh;
+  }
 }
 
 @property --tw-space-y-reverse {

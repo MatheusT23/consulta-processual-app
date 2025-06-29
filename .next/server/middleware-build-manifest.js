@@ -3,10 +3,10 @@ globalThis.__BUILD_MANIFEST = {
     "/": [
       "static/chunks/node_modules_next_9a882e92._.js",
       "static/chunks/node_modules_react-dom_82bb97c6._.js",
-      "static/chunks/node_modules_6699786f._.js",
+      "static/chunks/node_modules_ccb13381._.js",
       "static/chunks/[root-of-the-server]__6961bf74._.js",
       "static/chunks/pages_index_5771e187._.js",
-      "static/chunks/pages_index_a3604477._.js"
+      "static/chunks/pages_index_1663ab92._.js"
     ],
     "/_app": [
       "static/chunks/node_modules_next_dist_4f3d469a._.js",
@@ -16,6 +16,14 @@ globalThis.__BUILD_MANIFEST = {
       "static/chunks/styles_globals_79636149.css",
       "static/chunks/pages__app_5771e187._.js",
       "static/chunks/pages__app_7132be12._.js"
+    ],
+    "/_error": [
+      "static/chunks/[root-of-the-server]__8df7605f._.js",
+      "static/chunks/node_modules_react-dom_82bb97c6._.js",
+      "static/chunks/node_modules_a51498a5._.js",
+      "static/chunks/[root-of-the-server]__923cb372._.js",
+      "static/chunks/pages__error_5771e187._.js",
+      "static/chunks/pages__error_ec6747c0._.js"
     ]
   },
   "devFiles": [],

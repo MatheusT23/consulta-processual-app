@@ -471,17 +471,37 @@ __turbopack_context__.s({
     "default": (()=>App)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/react/jsx-dev-runtime.js [client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2f$index$2e$js__$5b$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/react/index.js [client] (ecmascript)");
+;
+var _s = __turbopack_context__.k.signature();
 ;
 ;
 function App({ Component, pageProps }) {
+    _s();
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2f$index$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "App.useEffect": ()=>{
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", {
+                    "App.useEffect": ()=>{
+                        navigator.serviceWorker.register("/sw.js").catch({
+                            "App.useEffect": ()=>{
+                            // registration failed
+                            }
+                        }["App.useEffect"]);
+                    }
+                }["App.useEffect"]);
+            }
+        }
+    }["App.useEffect"], []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Component, {
         ...pageProps
     }, void 0, false, {
         fileName: "[project]/pages/_app.tsx",
-        lineNumber: 5,
+        lineNumber: 16,
         columnNumber: 10
     }, this);
 }
+_s(App, "OD7bBpZva5O2jO+Puf00hKivP7c=");
 _c = App;
 var _c;
 __turbopack_context__.k.register(_c, "App");

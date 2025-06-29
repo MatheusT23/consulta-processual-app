@@ -22,12 +22,13 @@ async function handler(req, res) {
             error: 'Method not allowed'
         });
     }
-    const { numeroProcesso } = req.body;
+    const { numeroProcesso, tribunal } = req.body;
     if (!numeroProcesso) {
         return res.status(400).json({
             error: 'Missing numeroProcesso'
         });
     }
+    const endpoint = tribunal === 'TJRJ' ? 'https://api-publica.datajud.cnj.jus.br/api_publica_tjrj/_search' : 'https://api-publica.datajud.cnj.jus.br/api_publica_trf2/_search';
     const payload = {
         query: {
             match: {
@@ -36,7 +37,7 @@ async function handler(req, res) {
         }
     };
     try {
-        const dataRes = await fetch('https://api-publica.datajud.cnj.jus.br/api_publica_trf1/_search', {
+        const dataRes = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 Authorization: `ApiKey ${process.env.DATAJUD_API_KEY ?? '<API Key>'}`,
@@ -60,7 +61,7 @@ async function handler(req, res) {
                 messages: [
                     {
                         role: 'system',
-                        content: 'Você é um advogado experiente e deve resumir brevemente os movimentos do processo baseado na resposta a seguir.'
+                        content: 'Você é um advogado experiente e deve resumir os movimentos do processo baseado na resposta a seguir. A sua resposta deverá separar cada movimento em um parágrafo, devidamente datados, e explique detalhadamente o que esse movimento pode representar para o andamento processual'
                     },
                     {
                         role: 'user',
