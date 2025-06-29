@@ -107,7 +107,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const { browser, page, siteKey, pageUrl } = session
   try {
     const cfToken = await solveTurnstile(siteKey, pageUrl)
-    await page.evaluate((t) => {
+    await page.evaluate((t: string) => {
       const input = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null
       if (input) input.value = t
     }, cfToken)
