@@ -3,18 +3,19 @@ import type { AppProps } from "next/app";
 import { useEffect } from "react";
 
 /**
- * Root application component loaded for every page.
+ * Componente raiz carregado em todas as páginas.
  *
- * Registers the service worker on the `load` event and
- * then renders the requested page component.
+ * Registra o service worker no evento `load` e
+ * em seguida renderiza a página solicitada.
  */
 export default function App({ Component, pageProps }: AppProps) {
-  // Register service worker once on mount
+  // Registra o service worker apenas uma vez
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
+        // Tenta registrar o service worker
         navigator.serviceWorker.register("/sw.js").catch(() => {
-          // registration failed
+          // Falha no registro é ignorada
         });
       });
     }
