@@ -22,8 +22,8 @@ export default async function handler(
 
   // Define a URL de acordo com o tribunal escolhido
   const endpoint =
-    tribunal === 'TJRJ'
-      ? 'https://api-publica.datajud.cnj.jus.br/api_publica_tjrj/_search'
+    tribunal === 'TRT1'
+      ? 'https://api-publica.datajud.cnj.jus.br/api_publica_trt1/_search'
       : 'https://api-publica.datajud.cnj.jus.br/api_publica_trf2/_search';
 
   // Corpo da requisição para a API do CNJ
