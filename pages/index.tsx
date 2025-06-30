@@ -288,7 +288,7 @@ export default function App() {
             >
               <option value="TRF2">TRF2</option>
               {/* <option value="TRF2-Eproc">TRF2 - Eproc</option> */}
-              <option value="TJRJ">TJRJ</option>
+              <option value="TRT1">TRT1</option>
             </select>
           </div>
 
