@@ -14,11 +14,13 @@ var __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$
 ;
 ;
 function App({ Component, pageProps }) {
+    // Registra o service worker apenas uma vez
     (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useEffect"])(()=>{
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", ()=>{
+                // Tenta registrar o service worker
                 navigator.serviceWorker.register("/sw.js").catch(()=>{
-                // registration failed
+                // Falha no registro é ignorada
                 });
             });
         }
@@ -27,7 +29,7 @@ function App({ Component, pageProps }) {
         ...pageProps
     }, void 0, false, {
         fileName: "[project]/pages/_app.tsx",
-        lineNumber: 16,
+        lineNumber: 24,
         columnNumber: 10
     }, this);
 }

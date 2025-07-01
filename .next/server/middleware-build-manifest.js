@@ -24,6 +24,24 @@ globalThis.__BUILD_MANIFEST = {
       "static/chunks/[root-of-the-server]__923cb372._.js",
       "static/chunks/pages__error_5771e187._.js",
       "static/chunks/pages__error_ec6747c0._.js"
+    ],
+    "/dashboard": [
+      "static/chunks/[root-of-the-server]__d15106c0._.js",
+      "static/chunks/node_modules_next_dist_4f3d469a._.js",
+      "static/chunks/node_modules_react-dom_82bb97c6._.js",
+      "static/chunks/node_modules_tailwind-merge_dist_bundle-mjs_mjs_e33d9f9e._.js",
+      "static/chunks/node_modules_33e7fc4a._.js",
+      "static/chunks/pages_dashboard_index_tsx_5771e187._.js",
+      "static/chunks/pages_dashboard_index_tsx_6bc48998._.js"
+    ],
+    "/login": [
+      "static/chunks/node_modules_next_dist_4f3d469a._.js",
+      "static/chunks/node_modules_react-dom_82bb97c6._.js",
+      "static/chunks/node_modules_tailwind-merge_dist_bundle-mjs_mjs_e33d9f9e._.js",
+      "static/chunks/node_modules_58777df1._.js",
+      "static/chunks/[root-of-the-server]__b6242f49._.js",
+      "static/chunks/pages_login_index_tsx_5771e187._.js",
+      "static/chunks/pages_login_index_tsx_d79a315b._.js"
     ]
   },
   "devFiles": [],
