@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Head from 'next/head';
 import { useState, useRef, useEffect } from 'react';
 import { Menu, Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 
@@ -194,7 +195,19 @@ export default function App() {
   // --- Renderização ---
 
   return (
-    <div className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans">
+    <>
+      <Head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Manrope:wght@500&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+      <div
+        className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans font-medium"
+        style={{ fontFamily: 'Manrope, sans-serif' }}
+      >
       {/* Cabeçalho */}
       <header className="flex items-center justify-between p-4 border-b border-gray-700/50 flex-shrink-0">
         <div className="flex items-center gap-4">
@@ -322,5 +335,6 @@ export default function App() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
