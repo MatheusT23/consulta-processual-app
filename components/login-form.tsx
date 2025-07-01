@@ -20,6 +20,16 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const level = (form.elements.namedItem("level") as HTMLSelectElement)?.value;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("userLevel", level || "1");
+    }
+    window.location.href = "/dashboard";
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       {/* Cartão central que contém o formulário */}
@@ -33,7 +43,7 @@ export function LoginForm({
         </CardHeader>
         <CardContent>
           {/* Campos de entrada do usuário */}
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
@@ -55,6 +65,13 @@ export function LoginForm({
                   </a>
                 </div>
                 <Input id="password" type="password" required />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="level">Nível</Label>
+                <select id="level" name="level" className="border rounded-md p-2">
+                  <option value="1">Usuário</option>
+                  <option value="0">Admin</option>
+                </select>
               </div>
               <div className="flex flex-col gap-3">
                 {/* Botões de ação */}
