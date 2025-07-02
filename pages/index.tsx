@@ -245,7 +245,7 @@ export default function App() {
 
               {/* Balão de mensagem */}
               <div
-                className={`max-w-xl p-4 rounded-2xl ${
+                className={`max-w-xl p-4 rounded-2xl shadow ${
                   message.sender === 'user'
                     ? 'bg-[#2a365e] rounded-br-lg'
                     : 'bg-gray-800/60 rounded-bl-lg'
@@ -267,7 +267,7 @@ export default function App() {
                 <div className="w-8 h-8 flex-shrink-0 bg-blue-500 rounded-full flex items-center justify-center">
                   <Bot size={20} />
                 </div>
-                <div className="max-w-xl p-4 rounded-2xl bg-gray-800/60 rounded-bl-lg flex items-center space-x-2">
+                <div className="max-w-xl p-4 rounded-2xl bg-gray-800/60 rounded-bl-lg flex items-center space-x-2 shadow">
                     <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-0"></span>
                     <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-150"></span>
                     <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-300"></span>
@@ -282,7 +282,7 @@ export default function App() {
       {/* Rodapé com campo de entrada */}
       
       <footer
-        className="w-full p-6 md:p-6 flex-shrink-0 bg-[#2a365e] rounded-t-[0.75rem] shadow-lg"
+        className="w-full p-6 md:p-6 flex-shrink-0 bg-[#2a365e] rounded-t-[1.05rem] shadow-2xl"
       >
         <div className="max-w-3xl mx-auto">
            {/* Botões de ação */}
