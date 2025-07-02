@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import Head from 'next/head';
 import { useState, useRef, useEffect } from 'react';
-import { Menu, Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
+import { Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
+import { AppSidebar } from '@/components/app-sidebar'
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from '@/components/ui/sidebar'
 
 /**
  * Página principal do chat. Gerencia o estado da conversa
@@ -204,18 +210,17 @@ export default function App() {
           rel="stylesheet"
         />
       </Head>
-      <div
-        className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans font-medium"
-        style={{ fontFamily: 'Manrope, sans-serif' }}
-      >
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <div
+            className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans font-medium"
+            style={{ fontFamily: 'Manrope, sans-serif' }}
+          >
       {/* Cabeçalho */}
       <header className="flex items-center justify-between p-4 border-b border-gray-700/50 flex-shrink-0">
         <div className="flex items-center gap-4">
-          {/*
-          <button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
-            <Menu size={20} />
-          </button>
-          */}
+          <SidebarTrigger className="p-2 rounded-md hover:bg-gray-700/50 transition-colors" />
           <h1 className="text-2xl font-bold font-sans">Acompanhar Processo</h1>
         </div>
         <div className="flex items-center gap-2">
@@ -339,7 +344,9 @@ export default function App() {
           {/* <p className="text-center text-xs text-gray-500 mt-2">Koda - Todos os direitos reservados</p> */}
         </div>
       </footer>
-    </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
     </>
   );
 }
