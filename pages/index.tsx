@@ -219,7 +219,10 @@ export default function App() {
           <h1 className="text-2xl font-bold font-sans">Acompanhar Processo</h1>
         </div>
         <div className="flex items-center gap-2">
-           <Link href="/login" className="bg-[#2a365e] text-white px-4 py-2 text-sm font-semibold rounded-lg hover:opacity-90 transition-colors">
+           <Link
+             href="/login"
+             className="bg-[#2a365e] text-white px-4 py-2 text-sm font-semibold rounded-[0.75rem] shadow-md hover:opacity-90 transition-colors"
+           >
             Entrar
            </Link>
            {/*<button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
@@ -278,7 +281,9 @@ export default function App() {
 
       {/* Rodapé com campo de entrada */}
       
-      <footer className="w-full p-6 md:p-6 flex-shrink-0 bg-[#2a365e]">
+      <footer
+        className="w-full p-6 md:p-6 flex-shrink-0 bg-[#2a365e] rounded-t-[0.75rem] shadow-lg"
+      >
         <div className="max-w-3xl mx-auto">
            {/* Botões de ação */}
           {/*<div className="flex items-center gap-2 mb-2">
