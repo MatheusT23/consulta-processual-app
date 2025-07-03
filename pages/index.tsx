@@ -224,15 +224,17 @@ export default function App() {
           <h1 className="text-2xl font-bold font-sans">Acompanhar Processo</h1>
         </div>
         <div className="flex items-center gap-2">
+          {/*
            <Link
              href="/login"
              className="bg-[#2a365e] text-white px-4 py-2 text-sm font-semibold rounded-[0.75rem] shadow-md hover:opacity-90 transition-colors"
            >
             Entrar
            </Link>
-           {/*<button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
+          */}
+          {/*<button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
             <Bot size={20} />
-           </button>*/}
+          </button>*/}
         </div>
       </header>
 
