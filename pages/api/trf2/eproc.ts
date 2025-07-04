@@ -136,7 +136,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Fecha o navegador após a extração
     await browser.close()
 
-    // Constrói as mensagens para o ChatGPT
+    const prompt =
+      'Explique de forma clara e simples para um usuário leigo os dois últimos eventos deste processo judicial: ' +
+      JSON.stringify(data.events)
+
+    // Envia para o GPT gerar um resumo dos eventos
     const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -145,20 +149,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'Você é um especialista jurídico com a missão de explicar o andamento de processos judiciais para clientes leigos. Sua explicação deve ser precisa, didática e compreensível mesmo para quem não entende nada de direito. Evite jargões jurídicos e traduza todos os termos técnicos para uma linguagem do dia a dia.',
-          },
-          {
-            role: 'user',
-            content:
-              'Este é o conjunto de dados retornado da API pública com os principais eventos de um processo judicial. Analise o contexto geral do processo e explique de forma clara, objetiva e detalhada o que significa o andamento mais recente. Use uma linguagem simples, como se estivesse explicando para alguém que não tem nenhum conhecimento jurídico. Informe também, se possível, quais são os próximos passos que podem ocorrer nesse processo.\n\nAqui estão os dados:\n\n```json\n' +
-              JSON.stringify(data.events) +
-              '\n```',
-          },
-        ],
+        messages: [{ role: 'user', content: prompt }],
         max_tokens: 200,
       }),
     })
