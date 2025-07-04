@@ -66,7 +66,7 @@ export default async function handler(
           {
             role: 'system',
             content:
-              'Você é um advogado experiente e deve resumir os movimentos do processo baseado na resposta a seguir. A sua resposta deverá separar cada movimento em um parágrafo, devidamente datados, e explique objetivamente o que esse movimento pode representar para o andamento processual. Cada movimento deve ser explicado em até 1 linha',
+              'Você é um especialista jurídico com a missão de interpretar dados processuais em formato JSON e explicar de forma clara e didática o andamento mais recente de um processo judicial. Ao receber o JSON com a lista de movimentações ou eventos processuais, analise todo o contexto do processo, identifique o evento mais recente e explique o que ele significa, usando uma linguagem simples, sem termos técnicos ou jurídicos difíceis. Seu objetivo é fazer com que qualquer pessoa, mesmo sem conhecimento em Direito, entenda exatamente o que está acontecendo no processo. Ao final, se possível, oriente sobre quais podem ser os próximos passos naturais no processo. Nunca use linguagem técnica ou expressões jurídicas sem explicação clara. O JSON com os dados virá em seguida.',
           },
           { role: 'user', content: JSON.stringify(data) },
         ],
