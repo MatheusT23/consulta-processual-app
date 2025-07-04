@@ -53,6 +53,10 @@ export default async function handler(
 
     const data = await dataRes.json()
 
+    // Retorna apenas o JSON obtido da API CNJ
+    return res.status(200).json(data)
+
+    /*
     // Utiliza o GPT para resumir os dados encontrados
     const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -83,6 +87,7 @@ export default async function handler(
     const summary = chatData.choices?.[0]?.message?.content ?? ''
 
     return res.status(200).json({ summary })
+    */
   } catch (error) {
     console.error(error)
     return res.status(500).json({ error: 'Failed to fetch' })
