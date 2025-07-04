@@ -218,7 +218,7 @@ export default function App() {
             style={{ fontFamily: 'Manrope, sans-serif' }}
           >
       {/* Cabeçalho */}
-      <header className="flex items-center justify-between p-4 border-b border-gray-700/50 flex-shrink-0">
+      <header className="bg-[#2a365e] text-white flex items-center justify-between p-4 border-b border-gray-700/50 flex-shrink-0">
         <div className="flex items-center gap-4">
           <SidebarTrigger className="p-2 rounded-md hover:bg-gray-700/50 transition-colors" />
           <h1 className="text-2xl font-bold font-sans">Acompanhar Processo</h1>
@@ -309,7 +309,7 @@ export default function App() {
               id="court"
               value={court}
               onChange={(e) => setCourt(e.target.value)}
-              className="p-1 rounded-md text-white bg-[#2a365e]"
+              className="rounded-md text-white bg-[#2a365e]"
             >
               <option value="TRF2">TRF2</option>
               {/* <option value="TRF2-Eproc">TRF2 - Eproc</option> */}
