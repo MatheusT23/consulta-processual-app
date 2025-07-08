@@ -8,7 +8,7 @@ export default function Document() {
       <Head>
         {/* Configurações de PWA */}
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#2a365e" />
       </Head>
       <body className="antialiased">
         <Main />
