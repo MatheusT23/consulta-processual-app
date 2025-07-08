@@ -218,7 +218,10 @@ export default function App() {
             style={{ fontFamily: 'Manrope, sans-serif' }}
           >
       {/* Cabeçalho */}
-      <header className="bg-[#2a365e] text-white flex items-center justify-between p-4 border-b border-gray-700/50 flex-shrink-0">
+      <header
+        className="bg-[#2a365e]/90 text-white flex items-center justify-between px-4 border-b border-gray-700/50 flex-shrink-0"
+        style={{ paddingTop: '0.8rem', paddingBottom: '0.8rem' }}
+      >
         <div className="flex items-center gap-4">
           <SidebarTrigger className="p-2 rounded-md hover:bg-gray-700/50 transition-colors" />
           <h1 className="text-2xl font-bold font-sans">Acompanhar Processo</h1>
@@ -289,7 +292,8 @@ export default function App() {
       {/* Rodapé com campo de entrada */}
       
       <footer
-        className="w-full p-6 md:p-6 flex-shrink-0 bg-[#2a365e] rounded-t-[1.05rem] shadow-2xl"
+        className="w-full px-6 md:px-6 flex-shrink-0 bg-[#2a365e]/90 rounded-t-[1.05rem] shadow-2xl"
+        style={{ paddingTop: '1.2rem', paddingBottom: '1.2rem' }}
       >
         <div className="max-w-3xl mx-auto">
            {/* Botões de ação */}
