@@ -86,6 +86,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Missing numeroProcesso' })
   }
 
+  if (!process.env.TWOCAPTCHA_API_KEY) {
+    return res.status(503).json({ error: 'TWOCAPTCHA_API_KEY not configured' })
+  }
+
   const puppeteer = await loadPuppeteer()
   
   // Abre navegador visível para depuração

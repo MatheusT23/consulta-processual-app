@@ -20,6 +20,10 @@ export default async function handler(
     return res.status(400).json({ error: 'Missing numeroProcesso' })
   }
 
+  if (!process.env.DATAJUD_API_KEY) {
+    return res.status(503).json({ error: 'DATAJUD_API_KEY not configured' })
+  }
+
   // Define a URL de acordo com o tribunal escolhido
   const endpoint =
     tribunal === 'TRT1'
