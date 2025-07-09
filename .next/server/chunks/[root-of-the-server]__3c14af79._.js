@@ -28,7 +28,9 @@ async function handler(req, res) {
             error: 'Missing numeroProcesso'
         });
     }
-    const endpoint = tribunal === 'TJRJ' ? 'https://api-publica.datajud.cnj.jus.br/api_publica_tjrj/_search' : 'https://api-publica.datajud.cnj.jus.br/api_publica_trf2/_search';
+    // Define a URL de acordo com o tribunal escolhido
+    const endpoint = tribunal === 'TRT1' ? 'https://api-publica.datajud.cnj.jus.br/api_publica_trt1/_search' : 'https://api-publica.datajud.cnj.jus.br/api_publica_trf2/_search';
+    // Corpo da requisição para a API do CNJ
     const payload = {
         query: {
             match: {
@@ -37,6 +39,7 @@ async function handler(req, res) {
         }
     };
     try {
+        // Chamada à API do CNJ
         const dataRes = await fetch(endpoint, {
             method: 'POST',
             headers: {
@@ -50,37 +53,40 @@ async function handler(req, res) {
             return res.status(dataRes.status).send(text);
         }
         const data = await dataRes.json();
-        const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`
-            },
-            body: JSON.stringify({
-                model: 'gpt-4o',
-                messages: [
-                    {
-                        role: 'system',
-                        content: 'Você é um advogado experiente e deve resumir os movimentos do processo baseado na resposta a seguir. A sua resposta deverá separar cada movimento em um parágrafo, devidamente datados, e explique detalhadamente o que esse movimento pode representar para o andamento processual'
-                    },
-                    {
-                        role: 'user',
-                        content: JSON.stringify(data)
-                    }
-                ],
-                max_tokens: 200
-            })
-        });
-        if (!chatRes.ok) {
-            const text = await chatRes.text();
-            return res.status(chatRes.status).send(text);
-        }
-        const chatData = await chatRes.json();
-        const summary = chatData.choices?.[0]?.message?.content ?? '';
-        return res.status(200).json({
-            summary
-        });
-    } catch (error) {
+        // Retorna apenas o JSON obtido da API CNJ
+        return res.status(200).json(data);
+    /*
+    // Utiliza o GPT para resumir os dados encontrados
+    const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'Você é um especialista jurídico com a missão de interpretar dados processuais em formato JSON e explicar de forma clara e didática o andamento mais recente de um processo judicial. Ao receber o JSON com a lista de movimentações ou eventos processuais, analise todo o contexto do processo, identifique o evento mais recente e explique o que ele significa, usando uma linguagem simples, sem termos técnicos ou jurídicos difíceis. Seu objetivo é fazer com que qualquer pessoa, mesmo sem conhecimento em Direito, entenda exatamente o que está acontecendo no processo. Ao final, se possível, oriente sobre quais podem ser os próximos passos naturais no processo. Nunca use linguagem técnica ou expressões jurídicas sem explicação clara. O JSON com os dados virá em seguida.',
+          },
+          { role: 'user', content: JSON.stringify(data) },
+        ],
+        max_tokens: 1000,
+      }),
+    })
+
+    if (!chatRes.ok) {
+      const text = await chatRes.text()
+      return res.status(chatRes.status).send(text)
+    }
+
+    const chatData = await chatRes.json()
+    const summary = chatData.choices?.[0]?.message?.content ?? ''
+
+    return res.status(200).json({ summary })
+    */ } catch (error) {
         console.error(error);
         return res.status(500).json({
             error: 'Failed to fetch'

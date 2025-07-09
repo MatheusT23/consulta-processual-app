@@ -2,8 +2,14 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 /** Importa o puppeteer dinamicamente apenas quando necessário. */
 async function loadPuppeteer() {
-  const puppeteer = await import('puppeteer')
-  return puppeteer
+
+  const puppeteerExtra = await import('puppeteer-extra')
+  const StealthPlugin = (await import('puppeteer-extra-plugin-stealth')).default
+  puppeteerExtra.default.use(StealthPlugin())
+  return puppeteerExtra.default // <- aqui sim retorna o correto com .launch()
+
+  /**const puppeteer = await import('puppeteer')
+  return puppeteer**/
 }
 
 /**
@@ -81,9 +87,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const puppeteer = await loadPuppeteer()
+  
   // Abre navegador visível para depuração
-  const browser = await puppeteer.launch({ headless: false })
+  const browser = await puppeteer.launch({ headless: false, executablePath: '/usr/bin/google-chrome', args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-blink-features=AutomationControlled', // bloqueia detecção direta
+  ] })
   const page = await browser.newPage()
+  
+  await page.evaluateOnNewDocument(() => {
+  Object.defineProperty(navigator, 'webdriver', {
+    get: () => false,
+  })
+})
+
   await page.setUserAgent(
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
   )
@@ -110,7 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }, cfToken)
     
     await page.click('button[type="submit"]');
-    await page.waitForSelector('#tabelaEventos tbody tr', { timeout: 10000 }); // Wait for the target element
+    await page.waitForSelector('#tabelaEventos tbody tr', { timeout: 60000 }); // Wait for the target element
     //await Promise.all([
     //page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 }), // Wait until network is idle
     //page.click('button[type="submit"]'),

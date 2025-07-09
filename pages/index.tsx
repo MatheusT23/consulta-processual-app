@@ -330,7 +330,7 @@ export default function App() {
               className="rounded-md text-white bg-[#2a365e]"
             >
               <option value="TRF2">TRF2</option>
-              {/* <option value="TRF2-Eproc">TRF2 - Eproc</option> */}
+              <option value="TRF2-Eproc">TRF2 - Eproc</option> 
               <option value="TRT1">TRT1</option>
             </select>
           </div>

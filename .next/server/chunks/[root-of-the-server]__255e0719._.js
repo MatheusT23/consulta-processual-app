@@ -16,11 +16,21 @@ var { g: global, __dirname } = __turbopack_context__;
 __turbopack_context__.s({
     "default": (()=>handler)
 });
-async function loadPuppeteer() {
-    const puppeteer = await __turbopack_context__.r("[externals]/puppeteer [external] (puppeteer, esm_import, async loader)")(__turbopack_context__.i);
-    return puppeteer;
-}
-async function solveTurnstile(siteKey, pageUrl) {
+/** Importa o puppeteer dinamicamente apenas quando necessário. */ async function loadPuppeteer() {
+    const puppeteerExtra = await __turbopack_context__.r("[externals]/puppeteer-extra [external] (puppeteer-extra, cjs, async loader)")(__turbopack_context__.i);
+    const StealthPlugin = (await __turbopack_context__.r("[externals]/puppeteer-extra-plugin-stealth [external] (puppeteer-extra-plugin-stealth, cjs, async loader)")(__turbopack_context__.i)).default;
+    puppeteerExtra.default.use(StealthPlugin());
+    return puppeteerExtra.default // <- aqui sim retorna o correto com .launch()
+    ;
+/**const puppeteer = await import('puppeteer')
+  return puppeteer**/ }
+/**
+ * Resolve o desafio Cloudflare Turnstile usando o serviço 2captcha.
+ *
+ * @param siteKey - Chave do captcha presente na página.
+ * @param pageUrl - URL completa onde o captcha aparece.
+ * @returns Token do captcha obtido via 2captcha.
+ */ async function solveTurnstile(siteKey, pageUrl) {
     const apiKey = process.env.TWOCAPTCHA_API_KEY;
     if (!apiKey) {
         throw new Error('Missing 2captcha API key');
@@ -79,19 +89,34 @@ async function handler(req, res) {
         });
     }
     const puppeteer = await loadPuppeteer();
+    // Abre navegador visível para depuração
     const browser = await puppeteer.launch({
-        headless: 'new'
+        headless: false,
+        executablePath: '/usr/bin/google-chrome',
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-blink-features=AutomationControlled'
+        ]
     });
     const page = await browser.newPage();
+    await page.evaluateOnNewDocument(()=>{
+        Object.defineProperty(navigator, 'webdriver', {
+            get: ()=>false
+        });
+    });
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
     await page.goto('https://eproc-consulta.trf2.jus.br/eproc/externo_controlador.php?acao=processo_consulta_publica');
+    // Preenche o número do processo no campo de busca
     await page.type('input.infraText', numeroProcesso);
+    // Captura a chave do captcha na página
     const siteKey = await page.evaluate(()=>{
         const el = document.querySelector('[data-sitekey]');
         return el ? el.getAttribute('data-sitekey') || '' : '';
     });
     const pageUrl = page.url();
     try {
+        // Resolve o captcha utilizando a API do 2captcha
         const cfToken = await solveTurnstile(siteKey, pageUrl);
         await page.evaluate((t)=>{
             const input = document.querySelector('input[name="cf-turnstile-response"]');
@@ -99,7 +124,7 @@ async function handler(req, res) {
         }, cfToken);
         await page.click('button[type="submit"]');
         await page.waitForSelector('#tabelaEventos tbody tr', {
-            timeout: 10000
+            timeout: 60000
         }); // Wait for the target element
         //await Promise.all([
         //page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 }), // Wait until network is idle
@@ -129,37 +154,40 @@ async function handler(req, res) {
                 }
             };
         });
+        // Fecha o navegador após a extração
         await browser.close();
-        const prompt = 'Explique de forma clara e simples para um usuário leigo os dois últimos eventos deste processo judicial: ' + JSON.stringify(data.events);
-        const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`
-            },
-            body: JSON.stringify({
-                model: 'gpt-4o',
-                messages: [
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
-                ],
-                max_tokens: 200
-            })
-        });
-        if (!chatRes.ok) {
-            const text = await chatRes.text();
-            return res.status(chatRes.status).send(text);
-        }
-        const chatData = await chatRes.json();
-        const resumo = chatData.choices?.[0]?.message?.content || '';
-        return res.status(200).json({
-            ...data,
-            resumo
-        });
-    } catch (err) {
+        // Retorna apenas o JSON extraído da página
+        return res.status(200).json(data);
+    /*
+    const prompt =
+      'Explique de forma clara e simples para um usuário leigo os dois últimos eventos deste processo judicial: ' +
+      JSON.stringify(data.events)
+
+    // Envia para o GPT gerar um resumo dos eventos
+    const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 200,
+      }),
+    })
+
+    if (!chatRes.ok) {
+      const text = await chatRes.text()
+      return res.status(chatRes.status).send(text)
+    }
+    const chatData = await chatRes.json()
+    const resumo = chatData.choices?.[0]?.message?.content || ''
+
+    return res.status(200).json({ ...data, resumo })
+    */ } catch (err) {
         console.error(err);
+        // Garante que o navegador seja fechado em caso de erro
         await browser.close();
         return res.status(500).json({
             error: 'Consulta falhou'
