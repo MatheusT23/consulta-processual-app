@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
 
 interface TurnstileWidgetProps {
@@ -10,6 +10,7 @@ interface TurnstileWidgetProps {
 export default function TurnstileWidget({ siteKey, onSuccess, onExpired }: TurnstileWidgetProps) {
   const divRef = useRef<HTMLDivElement>(null)
   const idRef = useRef<string | null>(null)
+  const [scriptLoaded, setScriptLoaded] = useState(false)
 
   useEffect(() => {
     ;(window as any).onTurnstileSuccess = (token: string) => {
@@ -21,7 +22,7 @@ export default function TurnstileWidget({ siteKey, onSuccess, onExpired }: Turns
   }, [onSuccess, onExpired])
 
   useEffect(() => {
-    if (!(window as any).turnstile || !divRef.current) return
+    if (!scriptLoaded || !(window as any).turnstile || !divRef.current) return
     idRef.current = (window as any).turnstile.render(divRef.current, {
       sitekey: siteKey,
       callback: 'onTurnstileSuccess',
@@ -37,11 +38,15 @@ export default function TurnstileWidget({ siteKey, onSuccess, onExpired }: Turns
         // ignore
       }
     }
-  }, [siteKey])
+  }, [siteKey, scriptLoaded])
 
   return (
     <>
-      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        strategy="lazyOnload"
+        onLoad={() => setScriptLoaded(true)}
+      />
       <div ref={divRef} className="cf-turnstile" />
     </>
   )
