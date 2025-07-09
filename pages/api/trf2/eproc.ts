@@ -132,27 +132,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }, cfToken)
     
     await page.click('button[type="submit"]');
-    await page.waitForSelector('#tabelaEventos tbody tr', { timeout: 60000 }); // Wait for the target element
-    //await Promise.all([
-    //page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 }), // Wait until network is idle
-    //page.click('button[type="submit"]'),
-    //])
-    //await page.waitForSelector('#tabelaEventos tbody tr')
+    await page.waitForSelector('table.infraTable', { timeout: 60000 });
 
     const data = await page.evaluate(() => {
-      const rows = Array.from(document.querySelectorAll('#tabelaEventos tbody tr'))
-      const events = rows.slice(0, 2).map((row) => {
-        const columns = row.querySelectorAll('td')
-        const data = columns[0]?.textContent?.trim() || ''
-        const descricao = columns[1]?.textContent?.trim() || ''
-        return { data, descricao }
-      })
+      const tables = Array.from(document.querySelectorAll('table.infraTable'))
+      let events: { dataHora: string; descricao: string; documentos: string }[] = []
 
-      const classe = (document.querySelector('#classe') as HTMLElement)?.innerText || ''
-      const assunto = (document.querySelector('#assunto') as HTMLElement)?.innerText || ''
-      const vara = (document.querySelector('#vara') as HTMLElement)?.innerText || ''
+      for (const table of tables) {
+        const headers = Array.from(table.querySelectorAll('th')).map(h => h.textContent?.trim())
+        if (headers[1] === 'Data/Hora' && headers[2] === 'Descrição') {
+          const rows = Array.from(table.querySelectorAll('tr')).slice(1, 3)
+          events = rows.map(row => {
+            const cols = row.querySelectorAll('td')
+            const dataHora = cols[1]?.textContent?.trim() || ''
+            const descricao = cols[2]?.textContent?.trim() || ''
+            const docCell = cols[4]
+            let documentos = ''
+            if (docCell) {
+              const links = Array.from(docCell.querySelectorAll('a')).map(a => (a as HTMLAnchorElement).href)
+              documentos = links.join(', ')
+              if (!documentos) documentos = docCell.textContent?.trim() || ''
+            }
+            return { dataHora, descricao, documentos }
+          })
+          break
+        }
+      }
 
-      return { events, info: { classe, assunto, vara } }
+      return { events }
     })
 
     // Fecha o navegador após a extração
