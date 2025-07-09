@@ -371,7 +371,7 @@ export default function App() {
       {court === 'TRF2-Captcha' && (
         <div className="mb-3">
           <TurnstileWidget
-            siteKey={process.env.NEXT_PUBLIC_CF_SITE_KEY ?? ''}
+            siteKey={String(process.env.NEXT_PUBLIC_CF_SITE_KEY ?? '')}
             onSuccess={(t) => setCaptchaToken(t)}
             onExpired={() => setCaptchaToken('')}
           />

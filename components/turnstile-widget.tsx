@@ -23,8 +23,12 @@ export default function TurnstileWidget({ siteKey, onSuccess, onExpired }: Turns
 
   useEffect(() => {
     if (!scriptLoaded || !(window as any).turnstile || !divRef.current) return
+    if (!siteKey) {
+      console.warn('Turnstile siteKey is missing')
+      return
+    }
     idRef.current = (window as any).turnstile.render(divRef.current, {
-      sitekey: siteKey,
+      sitekey: String(siteKey),
       callback: 'onTurnstileSuccess',
       'expired-callback': 'onTurnstileExpired',
       'error-callback': 'onTurnstileExpired'
