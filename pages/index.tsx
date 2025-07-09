@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Head from 'next/head';
 import { useState, useRef, useEffect } from 'react';
-import TurnstileWidget from '@/components/turnstile-widget'
 import { Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 import { AppSidebar } from '@/components/app-sidebar'
 import {
@@ -26,7 +25,6 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   // Tribunal selecionado pelo usuário
   const [court, setCourt] = useState('TRF2');
-  const [captchaToken, setCaptchaToken] = useState('');
   const [result, setResult] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -41,7 +39,6 @@ export default function App() {
   }, [messages]);
 
   useEffect(() => {
-    setCaptchaToken('');
     setResult(null);
     setErrorMsg('');
   }, [court]);
@@ -191,7 +188,7 @@ export default function App() {
         const res = await fetch('/api/trf2/captcha', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ numeroProcesso: trimmedInput, token: captchaToken }),
+          body: JSON.stringify({ numeroProcesso: trimmedInput }),
         });
         if (!res.ok) throw new Error('Erro ao consultar o processo');
         const data = await res.json();
@@ -372,18 +369,7 @@ export default function App() {
         </select>
       </div>
 
-      {court === 'TRF2-Captcha' && (
-        <div className="mb-3">
-          <TurnstileWidget
-            siteKey={String(process.env.NEXT_PUBLIC_CF_SITE_KEY ?? '')}
-            onSuccess={(t) => {
-              console.log('Turnstile token:', t)
-              setCaptchaToken(t)
-            }}
-            onExpired={() => setCaptchaToken('')}
-          />
-        </div>
-      )}
+
 
 
           {/* Área de texto para entrada do número */}
@@ -406,8 +392,7 @@ export default function App() {
                 onClick={handleSendMessage}
                 disabled={
                   isLoading ||
-                  !inputValue.trim() ||
-                  (court === 'TRF2-Captcha' && !captchaToken)
+                  !inputValue.trim()
                 }
                 className="p-2 rounded-lg bg-gray-500 text-white disabled:bg-gray-500 disabled:text-white hover:bg-blue-700 transition-colors disabled:cursor-not-allowed"
               >
