@@ -126,7 +126,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     )
 
     await page.waitForSelector('button[type="submit"]', { visible: true })
-    await page.click('button[type="submit"]')
+    await page.$eval(
+      'button[type="submit"]',
+      (btn) => (btn as HTMLElement).click()
+    )
     await page.waitForSelector('table.infraTable', { timeout: 60000 })
 
     const data = await page.evaluate(() => {
