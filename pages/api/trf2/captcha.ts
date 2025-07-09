@@ -1,10 +1,64 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
+/** Importa o puppeteer dinamicamente apenas quando necessário. */
 async function loadPuppeteer() {
   const puppeteerExtra = await import('puppeteer-extra')
   const StealthPlugin = (await import('puppeteer-extra-plugin-stealth')).default
   puppeteerExtra.default.use(StealthPlugin())
   return puppeteerExtra.default
+}
+
+/**
+ * Resolve o desafio Cloudflare Turnstile usando o serviço 2captcha.
+ */
+async function solveTurnstile(siteKey: string, pageUrl: string): Promise<string> {
+  const apiKey = process.env.TWOCAPTCHA_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing 2captcha API key')
+  }
+
+  const createRes = await fetch('https://api.2captcha.com/createTask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      clientKey: apiKey,
+      task: {
+        type: 'TurnstileTaskProxyless',
+        websiteURL: pageUrl,
+        websiteKey: siteKey,
+      },
+    }),
+  })
+  const createData = (await createRes.json()) as {
+    errorId: number
+    errorDescription?: string
+    taskId?: number
+  }
+  if (createData.errorId !== 0 || !createData.taskId) {
+    throw new Error(createData.errorDescription || 'Failed to create captcha task')
+  }
+  const id = createData.taskId
+
+  while (true) {
+    await new Promise((r) => setTimeout(r, 5000))
+    const res = await fetch('https://api.2captcha.com/getTaskResult', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientKey: apiKey, taskId: id }),
+    })
+    const data = (await res.json()) as {
+      status: 'processing' | 'ready'
+      solution?: { token?: string }
+      errorId?: number
+      errorDescription?: string
+    }
+    if (data.status === 'ready' && data.solution?.token) {
+      return data.solution.token
+    }
+    if (data.status !== 'processing') {
+      throw new Error(data.errorDescription || 'Captcha solving failed')
+    }
+  }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -13,9 +67,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end('Method Not Allowed')
   }
 
-  const { numeroProcesso, token } = req.body || {}
-  if (!numeroProcesso || !token) {
-    return res.status(400).json({ error: 'Missing parameters' })
+  const { numeroProcesso } = req.body || {}
+  if (!numeroProcesso) {
+    return res.status(400).json({ error: 'Missing numeroProcesso' })
   }
 
   const puppeteer = await loadPuppeteer()
@@ -38,6 +92,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await page.goto(
       'https://eproc-consulta.trf2.jus.br/eproc/externo_controlador.php?acao=processo_consulta_publica'
     )
+
+    const siteKey = await page.evaluate(() => {
+      const el = document.querySelector('[data-sitekey]')
+      return el ? (el as HTMLElement).getAttribute('data-sitekey') || '' : ''
+    })
+    const pageUrl = page.url()
+
+    const token = await solveTurnstile(siteKey, pageUrl)
 
     await page.evaluate(
       (t: string, numero: string) => {
