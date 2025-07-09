@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Head from 'next/head';
 import { useState, useRef, useEffect } from 'react';
+import TurnstileWidget from '@/components/turnstile-widget'
 import { Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 import { AppSidebar } from '@/components/app-sidebar'
 import {
@@ -25,6 +26,9 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   // Tribunal selecionado pelo usuário
   const [court, setCourt] = useState('TRF2');
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [result, setResult] = useState<any>(null);
+  const [errorMsg, setErrorMsg] = useState('');
 
   // Referência para rolar o chat automaticamente
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -35,6 +39,12 @@ export default function App() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    setCaptchaToken('');
+    setResult(null);
+    setErrorMsg('');
+  }, [court]);
 
   // Efeito de digitação das mensagens iniciais do bot
   // useEffect(() => {
@@ -166,6 +176,28 @@ export default function App() {
         typeBotMessage(msg);
       } catch (error) {
         typeBotMessage(`Erro: ${(error as Error).message}`);
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    if (court === 'TRF2-Captcha') {
+      setInputValue('');
+      setIsLoading(true);
+      setErrorMsg('');
+      setResult(null);
+      try {
+        const res = await fetch('/api/trf2/captcha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ numeroProcesso: trimmedInput, token: captchaToken }),
+        });
+        if (!res.ok) throw new Error('Erro ao consultar o processo');
+        const data = await res.json();
+        setResult(data);
+      } catch (error) {
+        setErrorMsg((error as Error).message);
       } finally {
         setIsLoading(false);
       }
@@ -330,10 +362,21 @@ export default function App() {
               className="rounded-md text-white bg-[#2a365e]"
             >
               <option value="TRF2">TRF2</option>
-              <option value="TRF2-Eproc">TRF2 - Eproc</option> 
-              <option value="TRT1">TRT1</option>
-            </select>
-          </div>
+              <option value="TRF2-Eproc">TRF2 - Eproc</option>
+          <option value="TRF2-Captcha">TRF2 - Captcha</option>
+          <option value="TRT1">TRT1</option>
+        </select>
+      </div>
+
+      {court === 'TRF2-Captcha' && (
+        <div className="mb-3">
+          <TurnstileWidget
+            siteKey={process.env.NEXT_PUBLIC_CF_SITE_KEY ?? ''}
+            onSuccess={(t) => setCaptchaToken(t)}
+            onExpired={() => setCaptchaToken('')}
+          />
+        </div>
+      )}
 
 
           {/* Área de texto para entrada do número */}
@@ -354,13 +397,35 @@ export default function App() {
             <div className="flex items-center">
               <button
                 onClick={handleSendMessage}
-                disabled={isLoading || !inputValue.trim()}
+                disabled={
+                  isLoading ||
+                  !inputValue.trim() ||
+                  (court === 'TRF2-Captcha' && !captchaToken)
+                }
                 className="p-2 rounded-lg bg-gray-500 text-white disabled:bg-gray-500 disabled:text-white hover:bg-blue-700 transition-colors disabled:cursor-not-allowed"
               >
                 <Search size={20} />
               </button>
             </div>
           </div>
+          {errorMsg && (
+            <p className="text-red-500 mt-2">Erro: {errorMsg}</p>
+          )}
+          {result && (
+            <div className="bg-white text-black p-4 mt-2 rounded-md">
+              <h2 className="font-bold mb-2">Eventos recentes</h2>
+              <ul className="list-disc pl-4">
+                {result.events.map((ev: any, idx: number) => (
+                  <li key={idx} className="mb-1">
+                    <span className="font-semibold">{ev.data}</span> - {ev.descricao}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2"><strong>Classe:</strong> {result.info.classe}</p>
+              <p><strong>Assunto:</strong> {result.info.assunto}</p>
+              <p><strong>Vara:</strong> {result.info.vara}</p>
+            </div>
+          )}
           {/* <p className="text-center text-xs text-gray-500 mt-2">Koda - Todos os direitos reservados</p> */}
         </div>
       </footer>
