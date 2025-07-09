@@ -38,12 +38,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await page.goto(
       'https://eproc-consulta.trf2.jus.br/eproc/externo_controlador.php?acao=processo_consulta_publica'
     )
-    await page.type('input.infraText', numeroProcesso)
 
-    await page.evaluate((t: string) => {
-      const input = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null
-      if (input) input.value = t
-    }, token)
+    await page.evaluate(
+      (t: string, numero: string) => {
+        const cfInput = document.querySelector(
+          'input[name="cf-turnstile-response"]'
+        ) as HTMLInputElement | null
+        if (cfInput) cfInput.value = t
+
+        const procInput = document.querySelector('input.infraText') as HTMLInputElement | null
+        if (procInput) {
+          procInput.removeAttribute('disabled')
+          procInput.focus()
+          procInput.value = numero
+          procInput.dispatchEvent(new Event('input', { bubbles: true }))
+        }
+      },
+      token,
+      numeroProcesso
+    )
 
     await page.click('button[type="submit"]')
     await page.waitForSelector('#tabelaEventos tbody tr', { timeout: 60000 })
