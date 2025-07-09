@@ -37,55 +37,69 @@ export default function App() {
   }, [messages]);
 
   // Efeito de digitação das mensagens iniciais do bot
+  // useEffect(() => {
+  //   if (typingInitialized.current) return;
+  //   typingInitialized.current = true;
+  //
+  //   const botMessages = [
+  //     'Olá, seja bem vindo',
+  //     'Para que eu possa te atualizar sobre o andamento, por favor digite o número do processo.'
+  //   ];
+  //
+  //   let messageIndex = 0;
+  //   let interval: NodeJS.Timeout;
+  //
+  //   const typeNextMessage = () => {
+  //     const text = botMessages[messageIndex];
+  //     let charIndex = 0;
+  //     let currentIndex = 0;
+  //
+  //     setMessages((prev) => {
+  //       currentIndex = prev.length;
+  //       return [...prev, { sender: 'bot', text: '' }];
+  //     });
+  //
+  //     interval = setInterval(() => {
+  //       charIndex += 1;
+  //       setMessages((prev) => {
+  //         const newMessages = [...prev];
+  //         newMessages[currentIndex] = {
+  //           ...newMessages[currentIndex],
+  //           text: text.slice(0, charIndex),
+  //         };
+  //         return newMessages;
+  //       });
+  //
+  //       if (charIndex === text.length) {
+  //         clearInterval(interval);
+  //         messageIndex += 1;
+  //         if (messageIndex < botMessages.length) {
+  //           setTimeout(() => {
+  //             typeNextMessage();
+  //           }, 300);
+  //         }
+  //       }
+  //     }, 15);
+  //   };
+  //
+  //   // Inicia a digitação da primeira mensagem
+  //   typeNextMessage();
+  //
+  //   return () => clearInterval(interval);
+  // }, []);
+  
+  // Mensagens iniciais sem animação
   useEffect(() => {
     if (typingInitialized.current) return;
     typingInitialized.current = true;
-
-    const botMessages = [
-      'Olá, seja bem vindo',
-      'Para que eu possa te atualizar sobre o andamento, por favor digite o número do processo.'
-    ];
-
-    let messageIndex = 0;
-    let interval: NodeJS.Timeout;
-
-    const typeNextMessage = () => {
-      const text = botMessages[messageIndex];
-      let charIndex = 0;
-      let currentIndex = 0;
-
-      setMessages((prev) => {
-        currentIndex = prev.length;
-        return [...prev, { sender: 'bot', text: '' }];
-      });
-
-      interval = setInterval(() => {
-        charIndex += 1;
-        setMessages((prev) => {
-          const newMessages = [...prev];
-          newMessages[currentIndex] = {
-            ...newMessages[currentIndex],
-            text: text.slice(0, charIndex),
-          };
-          return newMessages;
-        });
-
-        if (charIndex === text.length) {
-          clearInterval(interval);
-          messageIndex += 1;
-          if (messageIndex < botMessages.length) {
-            setTimeout(() => {
-              typeNextMessage();
-            }, 300);
-          }
-        }
-      }, 15);
-    };
-
-    // Inicia a digitação da primeira mensagem
-    typeNextMessage();
-
-    return () => clearInterval(interval);
+    setMessages([
+      { sender: 'bot', text: 'Olá, seja bem vindo' },
+      {
+        sender: 'bot',
+        text:
+          'Para que eu possa te atualizar sobre o andamento, por favor digite o número do processo.'
+      }
+    ]);
   }, []);
 
   /**
@@ -94,30 +108,34 @@ export default function App() {
    * @param text - Texto que deve aparecer no chat.
    */
   const typeBotMessage = (text: string) => {
-    let charIndex = 0;
-    let currentIndex = 0;
+    // Efeito de digitação desativado temporariamente
+    // let charIndex = 0;
+    // let currentIndex = 0;
+    //
+    // setMessages((prev) => {
+    //   currentIndex = prev.length;
+    //   return [...prev, { sender: 'bot', text: '' }];
+    // });
+    //
+    // const interval = setInterval(() => {
+    //   charIndex += 1;
+    //   setMessages((prev) => {
+    //     const newMessages = [...prev];
+    //     newMessages[currentIndex] = {
+    //       ...newMessages[currentIndex],
+    //       text: text.slice(0, charIndex),
+    //     };
+    //     return newMessages;
+    //   });
+    //
+    //   if (charIndex === text.length) {
+    //     clearInterval(interval);
+    //     setIsLoading(false);
+    //   }
+    // }, 5);
 
-    setMessages((prev) => {
-      currentIndex = prev.length;
-      return [...prev, { sender: 'bot', text: '' }];
-    });
-
-    const interval = setInterval(() => {
-      charIndex += 1;
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        newMessages[currentIndex] = {
-          ...newMessages[currentIndex],
-          text: text.slice(0, charIndex),
-        };
-        return newMessages;
-      });
-
-      if (charIndex === text.length) {
-        clearInterval(interval);
-        setIsLoading(false);
-      }
-    }, 5);
+    setMessages((prev) => [...prev, { sender: 'bot', text }]);
+    setIsLoading(false);
   };
 
   // --- Manipuladores de eventos ---
