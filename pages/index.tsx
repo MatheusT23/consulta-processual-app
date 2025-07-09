@@ -376,7 +376,10 @@ export default function App() {
         <div className="mb-3">
           <TurnstileWidget
             siteKey={String(process.env.NEXT_PUBLIC_CF_SITE_KEY ?? '')}
-            onSuccess={(t) => setCaptchaToken(t)}
+            onSuccess={(t) => {
+              console.log('Turnstile token:', t)
+              setCaptchaToken(t)
+            }}
             onExpired={() => setCaptchaToken('')}
           />
         </div>
