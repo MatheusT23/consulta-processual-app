@@ -81,8 +81,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const puppeteer = await loadPuppeteer()
-  // Abre navegador em modo headless
-  const browser = await puppeteer.launch({ headless: 'new' })
+  // Abre navegador visível para depuração
+  const browser = await puppeteer.launch({ headless: false })
   const page = await browser.newPage()
   await page.setUserAgent(
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
