@@ -85,6 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const page = await browser.newPage()
+    page.setDefaultTimeout(60000)
 
     await page.evaluateOnNewDocument(() => {
       Object.defineProperty(navigator, 'webdriver', { get: () => false })
@@ -124,6 +125,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       numeroProcesso
     )
 
+    await page.waitForSelector('button[type="submit"]', { visible: true })
     await page.click('button[type="submit"]')
     await page.waitForSelector('table.infraTable', { timeout: 60000 })
 
