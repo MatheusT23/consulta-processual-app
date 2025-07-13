@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useState, useRef, useEffect } from 'react';
 import { Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 import { AppSidebar } from '@/components/app-sidebar'
+import { BottomNav } from '@/components/bottom-nav'
 import {
   SidebarProvider,
   SidebarInset,
@@ -423,6 +424,7 @@ export default function App() {
       </footer>
           </div>
         </SidebarInset>
+        <BottomNav />
       </SidebarProvider>
     </>
   );

@@ -14,6 +14,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { BottomNav } from "@/components/bottom-nav"
 
 export default function DashboardPage() {
   return (
@@ -55,6 +56,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </SidebarInset>
+        <BottomNav />
       </SidebarProvider>
     </>
   )
