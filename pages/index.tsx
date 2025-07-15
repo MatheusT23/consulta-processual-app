@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import { Search, Eye, Folder } from 'lucide-react'
 
 export default function Home() {
   return (
@@ -17,8 +18,12 @@ export default function Home() {
               <img src="/next.svg" alt="Logo" className="h-8 w-8" />
               <span className="text-xl font-bold">Consulta Processual</span>
             </div>
-            <Link href="/consulta" className="bg-white text-[#2a365e] px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
-              Consultar Processo
+            <Link
+              href="/consulta"
+              className="bg-white text-[#2a365e] px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 flex items-center justify-center gap-2"
+            >
+              <Search className="md:hidden size-5" />
+              <span className="hidden md:inline">Consultar Processo</span>
             </Link>
           </div>
         </header>
@@ -34,14 +39,17 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-center">Como funciona</h2>
             <div className="grid gap-8 md:grid-cols-3">
               <div className="text-center p-4">
+                <Search className="mx-auto mb-2 size-8 text-[#2a365e]" />
                 <h3 className="text-xl font-semibold mb-2">1. Pesquise</h3>
                 <p>Informe o número do processo que deseja acompanhar.</p>
               </div>
               <div className="text-center p-4">
+                <Eye className="mx-auto mb-2 size-8 text-[#2a365e]" />
                 <h3 className="text-xl font-semibold mb-2">2. Acompanhe</h3>
                 <p>Receba um resumo dos últimos andamentos de forma clara.</p>
               </div>
               <div className="text-center p-4">
+                <Folder className="mx-auto mb-2 size-8 text-[#2a365e]" />
                 <h3 className="text-xl font-semibold mb-2">3. Organize</h3>
                 <p>Mantenha todos os seus processos reunidos para consulta rápida.</p>
               </div>
