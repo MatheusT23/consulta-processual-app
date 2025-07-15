@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 import { AppSidebar } from '@/components/app-sidebar'
 import { BottomNav } from '@/components/bottom-nav'
+import TurnstileWidget from '@/components/turnstile-widget'
 import {
   SidebarProvider,
   SidebarInset,
@@ -28,8 +29,8 @@ export default function ConsultaPage() {
   const [court, setCourt] = useState('TRF2');
   const [result, setResult] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState('');
-  const [captchaImg, setCaptchaImg] = useState<string | null>(null);
   const [captchaSession, setCaptchaSession] = useState<string | null>(null);
+  const [turnstileSiteKey, setTurnstileSiteKey] = useState<string | null>(null);
 
   // Referência para rolar o chat automaticamente
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -144,8 +145,32 @@ export default function ConsultaPage() {
     //   }
     // }, 5);
 
-    setMessages((prev) => [...prev, { sender: 'bot', text }]);
-    setIsLoading(false);
+  setMessages((prev) => [...prev, { sender: 'bot', text }]);
+  setIsLoading(false);
+ };
+
+  /**
+   * Envia o token obtido no captcha manual para a API.
+   */
+  const handleSolveManual = async (token: string): Promise<void> => {
+    if (!captchaSession) return;
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/trf2/manual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'solve', sessionId: captchaSession, token }),
+      });
+      if (!res.ok) throw new Error('Erro ao consultar o processo');
+      const data = await res.json();
+      setResult(data);
+      setCaptchaSession(null);
+      setTurnstileSiteKey(null);
+    } catch (error) {
+      setErrorMsg((error as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // --- Manipuladores de eventos ---
@@ -216,32 +241,13 @@ export default function ConsultaPage() {
           });
           if (!res.ok) throw new Error('Erro ao iniciar a sessão');
           const data = await res.json();
-          setCaptchaImg(data.captcha);
+          setTurnstileSiteKey(data.siteKey || null);
           setCaptchaSession(data.sessionId);
-          setMessages((prev) => [...prev, { sender: 'bot', text: 'Digite o captcha exibido.' }]);
+          setMessages((prev) => [...prev, { sender: 'bot', text: 'Resolva o captcha abaixo.' }]);
           setInputValue('');
         } catch (error) {
           setErrorMsg((error as Error).message);
         } finally {
-          setIsLoading(false);
-        }
-      } else {
-        setIsLoading(true);
-        try {
-          const res = await fetch('/api/trf2/manual', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'solve', sessionId: captchaSession, captcha: trimmedInput }),
-          });
-          if (!res.ok) throw new Error('Erro ao consultar o processo');
-          const data = await res.json();
-          setResult(data);
-          setCaptchaImg(null);
-          setCaptchaSession(null);
-        } catch (error) {
-          setErrorMsg((error as Error).message);
-        } finally {
-          setInputValue('');
           setIsLoading(false);
         }
       }
@@ -433,11 +439,12 @@ export default function ConsultaPage() {
                 }
               }}
               onKeyPress={handleKeyPress}
-              placeholder={captchaSession ? 'Digite o captcha...' : 'Digite o Número do Processo...'}
+              placeholder={captchaSession ? 'Aguardando resolução do captcha...' : 'Digite o Número do Processo...'}
               rows={1}
               className="flex-1 bg-transparent p-2 resize-none outline-none placeholder-white text-[105%] font-bold text-white"
               style={{ maxHeight: '150px' }}
               inputMode={captchaSession ? 'text' : 'numeric'}
+              disabled={Boolean(captchaSession)}
             />
             <div className="flex items-center">
               <button
@@ -455,9 +462,16 @@ export default function ConsultaPage() {
           {errorMsg && (
             <p className="text-red-500 mt-2">Erro: {errorMsg}</p>
           )}
-          {captchaImg && (
+          {turnstileSiteKey && (
             <div className="mt-2 flex flex-col items-center">
-              <img src={`data:image/png;base64,${captchaImg}`} alt="captcha" className="mb-2 border rounded" />
+              <TurnstileWidget
+                siteKey={turnstileSiteKey}
+                onSuccess={handleSolveManual}
+                onExpired={() => {
+                  setCaptchaSession(null);
+                  setTurnstileSiteKey(null);
+                }}
+              />
             </div>
           )}
           {result && (
