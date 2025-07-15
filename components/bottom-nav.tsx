@@ -4,7 +4,10 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 
 export function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background flex justify-around items-center py-2 md:hidden">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background flex justify-around items-center pt-2 md:hidden"
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.5rem)' }}
+    >
       <Link href="/" className="flex flex-col items-center text-xs gap-1">
         <Home className="size-6" />
         Início

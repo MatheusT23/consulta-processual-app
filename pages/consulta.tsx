@@ -314,7 +314,7 @@ export default function ConsultaPage() {
         <AppSidebar />
         <SidebarInset>
           <div
-            className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans font-medium"
+            className="flex flex-col safe-h-screen pb-20 md:pb-0 bg-[#fff] text-blue font-sans font-medium"
             style={{ fontFamily: 'Manrope, sans-serif' }}
           >
       {/*
