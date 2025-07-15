@@ -12,7 +12,10 @@ export function BottomNav() {
         <Home className="size-6" />
         Início
       </Link>
-      <Link href="/dashboard" className="-mt-6 rounded-full bg-primary text-primary-foreground p-3 shadow-lg flex flex-col items-center text-xs gap-1">
+      <Link
+        href="/dashboard"
+        className="rounded-full bg-primary text-primary-foreground p-3 shadow-lg flex flex-col items-center text-xs gap-1"
+      >
         <ClipboardList className="size-6" />
         Meus Processos
       </Link>
