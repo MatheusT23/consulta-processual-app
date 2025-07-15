@@ -28,6 +28,8 @@ export default function ConsultaPage() {
   const [court, setCourt] = useState('TRF2');
   const [result, setResult] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const [captchaImg, setCaptchaImg] = useState<string | null>(null);
+  const [captchaSession, setCaptchaSession] = useState<string | null>(null);
 
   // Referência para rolar o chat automaticamente
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -202,6 +204,50 @@ export default function ConsultaPage() {
       return;
     }
 
+    if (court === 'TRF2-Manual') {
+      setErrorMsg('');
+      if (!captchaSession) {
+        setIsLoading(true);
+        try {
+          const res = await fetch('/api/trf2/manual', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'start', numeroProcesso: trimmedInput }),
+          });
+          if (!res.ok) throw new Error('Erro ao iniciar a sessão');
+          const data = await res.json();
+          setCaptchaImg(data.captcha);
+          setCaptchaSession(data.sessionId);
+          setMessages((prev) => [...prev, { sender: 'bot', text: 'Digite o captcha exibido.' }]);
+          setInputValue('');
+        } catch (error) {
+          setErrorMsg((error as Error).message);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(true);
+        try {
+          const res = await fetch('/api/trf2/manual', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'solve', sessionId: captchaSession, captcha: trimmedInput }),
+          });
+          if (!res.ok) throw new Error('Erro ao consultar o processo');
+          const data = await res.json();
+          setResult(data);
+          setCaptchaImg(null);
+          setCaptchaSession(null);
+        } catch (error) {
+          setErrorMsg((error as Error).message);
+        } finally {
+          setInputValue('');
+          setIsLoading(false);
+        }
+      }
+      return;
+    }
+
     if (trimmedInput === '') return;
 
     const newUserMessage = { sender: 'user', text: trimmedInput };
@@ -366,6 +412,7 @@ export default function ConsultaPage() {
               <option value="TRF2">TRF2</option>
               <option value="TRF2-Eproc">TRF2 - Eproc</option>
           <option value="TRF2-Captcha">TRF2 - Captcha</option>
+          <option value="TRF2-Manual">TRF2 - Captcha Manual</option>
           <option value="TRT1">TRT1</option>
         </select>
       </div>
@@ -378,15 +425,19 @@ export default function ConsultaPage() {
             <textarea
               value={inputValue}
               onChange={(e) => {
-                const onlyNumbers = e.target.value.replace(/\D/g, '');
-                setInputValue(onlyNumbers);
+                if (captchaSession) {
+                  setInputValue(e.target.value);
+                } else {
+                  const onlyNumbers = e.target.value.replace(/\D/g, '');
+                  setInputValue(onlyNumbers);
+                }
               }}
               onKeyPress={handleKeyPress}
-              placeholder="Digite o Número do Processo..."
+              placeholder={captchaSession ? 'Digite o captcha...' : 'Digite o Número do Processo...'}
               rows={1}
               className="flex-1 bg-transparent p-2 resize-none outline-none placeholder-white text-[105%] font-bold text-white"
               style={{ maxHeight: '150px' }}
-              inputMode="numeric"
+              inputMode={captchaSession ? 'text' : 'numeric'}
             />
             <div className="flex items-center">
               <button
@@ -403,6 +454,11 @@ export default function ConsultaPage() {
           </div>
           {errorMsg && (
             <p className="text-red-500 mt-2">Erro: {errorMsg}</p>
+          )}
+          {captchaImg && (
+            <div className="mt-2 flex flex-col items-center">
+              <img src={`data:image/png;base64,${captchaImg}`} alt="captcha" className="mb-2 border rounded" />
+            </div>
           )}
           {result && (
             <div className="bg-white text-black p-4 mt-2 rounded-md">
