@@ -31,7 +31,7 @@ export default function DashboardPage() {
         <AppSidebar />
         <SidebarInset>
           <div
-            className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans font-medium"
+            className="flex flex-col safe-h-screen pb-20 md:pb-0 bg-[#fff] text-blue font-sans font-medium"
             style={{ fontFamily: 'Manrope, sans-serif' }}
           >
             <header className="bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4">
