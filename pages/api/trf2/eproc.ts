@@ -130,7 +130,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const input = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null
       if (input) input.value = t
     }, cfToken)
-    
+
+    // Aguarda até que o campo do token esteja preenchido. Em modo headless false
+    // isso permite ao usuário resolver manualmente o captcha caso deseje.
+    await page.waitForFunction(() => {
+      const el = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null
+      return !!el && el.value.trim().length > 0
+    })
+
     await page.click('button[type="submit"]');
     await page.waitForSelector('table.infraTable', { timeout: 60000 });
 
