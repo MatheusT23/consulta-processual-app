@@ -317,7 +317,7 @@ export default function ConsultaPage() {
             className="flex flex-col safe-h-screen bg-[#fff] text-blue font-sans font-medium"
             style={{ fontFamily: 'Manrope, sans-serif' }}
           >
-      {/* Cabeçalho */}
+      {/*
       <header
         className="bg-[#2a365e]/90 text-white flex items-center justify-between px-4 border-b border-gray-700/50 flex-shrink-0"
         style={{ paddingTop: '0.8rem', paddingBottom: '0.8rem' }}
@@ -327,19 +327,18 @@ export default function ConsultaPage() {
           <h1 className="text-2xl font-bold font-sans">Acompanhar Processo</h1>
         </div>
         <div className="flex items-center gap-2">
-          {/*
-           <Link
-             href="/login"
-             className="bg-[#2a365e] text-white px-4 py-2 text-sm font-semibold rounded-[0.75rem] shadow-md hover:opacity-90 transition-colors"
-           >
+          <Link
+            href="/login"
+            className="bg-[#2a365e] text-white px-4 py-2 text-sm font-semibold rounded-[0.75rem] shadow-md hover:opacity-90 transition-colors"
+          >
             Entrar
-           </Link>
-          */}
-          {/*<button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
+          </Link>
+          <button className="p-2 rounded-md hover:bg-gray-700/50 transition-colors">
             <Bot size={20} />
-          </button>*/}
+          </button>
         </div>
       </header>
+      */}
 
       {/* Área das mensagens */}
       <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">

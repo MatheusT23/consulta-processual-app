@@ -11,7 +11,7 @@ export function BottomNav() {
       </Link>
       <Link href="/dashboard" className="-mt-6 rounded-full bg-primary text-primary-foreground p-3 shadow-lg flex flex-col items-center text-xs gap-1">
         <ClipboardList className="size-6" />
-        Processos
+        Meus Processos
       </Link>
       <SidebarTrigger className="flex flex-col items-center text-xs gap-1" aria-label="Menu">
         <MenuIcon className="size-6" />
