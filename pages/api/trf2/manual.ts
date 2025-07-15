@@ -31,22 +31,28 @@ async function startSession(numeroProcesso: string) {
 
   await page.type('input.infraText', numeroProcesso)
 
-  const captchaEl = await page.waitForSelector('img[src*="captcha"]', { timeout: 30000 })
-  const img = await captchaEl?.screenshot({ encoding: 'base64' })
+  const siteKey = await page.evaluate(() => {
+    const el = document.querySelector('.cf-turnstile')
+    return el ? (el as HTMLElement).getAttribute('data-sitekey') || '' : ''
+  })
+  const pageUrl = page.url()
 
   const id = randomUUID()
   sessions.set(id, { browser, page })
 
-  return { id, img }
+  return { id, siteKey, pageUrl }
 }
 
-async function solveSession(id: string, captcha: string) {
+async function solveSession(id: string, token: string) {
   const session = sessions.get(id)
   if (!session) throw new Error('Sessão não encontrada')
   const { browser, page } = session
 
   try {
-    await page.type('input[name="captcha"]', captcha)
+    await page.evaluate((t: string) => {
+      const input = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null
+      if (input) input.value = t
+    }, token)
     await page.click('button[type="submit"]')
     await page.waitForSelector('table.infraTable', { timeout: 60000 })
     const data = await page.evaluate(() => {
@@ -87,17 +93,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end('Method Not Allowed')
   }
 
-  const { action, numeroProcesso, sessionId, captcha } = req.body || {}
+  const { action, numeroProcesso, sessionId, token } = req.body || {}
 
   try {
     if (action === 'start') {
       if (!numeroProcesso) return res.status(400).json({ error: 'Missing numeroProcesso' })
-      const { id, img } = await startSession(String(numeroProcesso))
-      return res.status(200).json({ sessionId: id, captcha: img })
+      const { id, siteKey, pageUrl } = await startSession(String(numeroProcesso))
+      return res.status(200).json({ sessionId: id, siteKey, pageUrl })
     }
     if (action === 'solve') {
-      if (!sessionId || !captcha) return res.status(400).json({ error: 'Missing parameters' })
-      const data = await solveSession(String(sessionId), String(captcha))
+      if (!sessionId || !token) return res.status(400).json({ error: 'Missing parameters' })
+      const data = await solveSession(String(sessionId), String(token))
       return res.status(200).json(data)
     }
     return res.status(400).json({ error: 'Invalid action' })
