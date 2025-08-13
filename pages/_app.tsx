@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useEffect } from "react";
+import { CourtProvider } from "@/hooks/use-court";
 
 /**
  * Componente raiz carregado em todas as páginas.
@@ -21,5 +22,9 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, []);
 
-  return <Component {...pageProps} />;
+  return (
+    <CourtProvider>
+      <Component {...pageProps} />
+    </CourtProvider>
+  );
 }
