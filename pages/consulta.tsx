@@ -5,6 +5,7 @@ import { Bot, User, Send, Mic, Search, Cpu } from 'lucide-react';
 import { AppSidebar } from '@/components/app-sidebar'
 import { BottomNav } from '@/components/bottom-nav'
 import TurnstileWidget from '@/components/turnstile-widget'
+import { useCourt } from '@/hooks/use-court'
 import {
   SidebarProvider,
   SidebarInset,
@@ -26,7 +27,7 @@ export default function ConsultaPage() {
   // Indica se o bot está processando
   const [isLoading, setIsLoading] = useState(false);
   // Tribunal selecionado pelo usuário
-  const [court, setCourt] = useState('TRF2');
+  const { court, setCourt } = useCourt();
   const [result, setResult] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [captchaSession, setCaptchaSession] = useState<string | null>(null);
@@ -405,26 +406,6 @@ export default function ConsultaPage() {
             </button>
           </div>*/}
         
-          {/* Seletor de tribunal */}
-          <div className="mb-2">
-            <label htmlFor="court" className="mr-2 text-white">Tribunal:</label>
-            <select
-              id="court"
-              value={court}
-              onChange={(e) => setCourt(e.target.value)}
-              className="rounded-md text-white bg-[#2a365e]"
-            >
-              <option value="TRF2">TRF2</option>
-              <option value="TRF2-Eproc">TRF2 - Eproc</option>
-          <option value="TRF2-Captcha">TRF2 - Captcha</option>
-          <option value="TRF2-Manual">TRF2 - Captcha Manual</option>
-          <option value="TRT1">TRT1</option>
-        </select>
-      </div>
-
-
-
-
           {/* Área de texto para entrada do número */}
           <div className="relative flex items-center p-2 bg-[#2a365e] border border-white rounded-2xl">
             <textarea
