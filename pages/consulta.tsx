@@ -314,7 +314,7 @@ export default function ConsultaPage() {
         <AppSidebar />
         <SidebarInset>
           <div
-            className="flex flex-col safe-h-screen pb-20 md:pb-0 bg-[#fff] text-blue font-sans font-medium"
+            className="flex flex-col safe-h-screen pb-[calc(env(safe-area-inset-bottom)+3.5rem)] md:pb-0 bg-[#fff] text-blue font-sans font-medium"
             style={{ fontFamily: 'Manrope, sans-serif' }}
           >
       {/*
@@ -426,7 +426,7 @@ export default function ConsultaPage() {
 
 
           {/* Área de texto para entrada do número */}
-          <div className="relative flex items-center mb-3 p-2 bg-[#2a365e] border border-white rounded-2xl">
+          <div className="relative flex items-center p-2 bg-[#2a365e] border border-white rounded-2xl">
             <textarea
               value={inputValue}
               onChange={(e) => {
