@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { ClipboardList, Menu as MenuIcon } from 'lucide-react'
-import { SidebarTrigger } from '@/components/ui/sidebar'
+import { useSidebar } from '@/components/ui/sidebar'
 import { useCourt } from '@/hooks/use-court'
 
 export function BottomNav() {
   const { court, setCourt } = useCourt()
+  const { toggleSidebar } = useSidebar()
 
   return (
     <nav
@@ -34,10 +35,15 @@ export function BottomNav() {
         <ClipboardList className="size-6" />
         Meus Processos
       </Link>
-      <SidebarTrigger className="flex flex-col items-center text-xs gap-1" aria-label="Menu">
+      <button
+        type="button"
+        onClick={toggleSidebar}
+        className="flex flex-col items-center text-xs gap-1"
+        aria-label="Menu"
+      >
         <MenuIcon className="size-6" />
         Menu
-      </SidebarTrigger>
+      </button>
     </nav>
   )
 }
