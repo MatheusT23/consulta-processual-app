@@ -172,10 +172,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Fecha o navegador após a extração
     await browser.close()
 
-    // Retorna apenas o JSON extraído da página
-    return res.status(200).json(data)
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(503).json({ error: 'OPENAI_API_KEY not configured' })
+    }
 
-    /*
     const prompt =
       'Explique de forma clara e simples para um usuário leigo os dois últimos eventos deste processo judicial: ' +
       JSON.stringify(data.events)
@@ -202,7 +202,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const resumo = chatData.choices?.[0]?.message?.content || ''
 
     return res.status(200).json({ ...data, resumo })
-    */
   } catch (err) {
     console.error(err)
     // Garante que o navegador seja fechado em caso de erro
